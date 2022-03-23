@@ -79,49 +79,50 @@ public class FourDim : MonoBehaviour
         List<float> projected = VectorsSubtracted(fourDpoint, VectorScaled(pDotDub, wHat));
         float scaleDown = 1 / (1 - pDotDub);
         projected = VectorScaled(scaleDown, projected);
-
         projected.RemoveAt(3);
 
         return projected;
 
-        //temp just drop 4th dimension
-        //List<float> projected = new List<float>(fourDpoint);
-        //projected.RemoveAt(3);
-        //return projected;
     }
 
 
     //takes in 4d ball location
     float ProjectedR(List<float> fourDpoint)
     {
-
-
-
-        //Projected Radius Vector = R
-
         float S = 1 / (1 - DotProduct(fourDpoint, wHat));
-
         return S;
+    }
+
+    void multiIncrement(List<float> xInc, List<float> yInc, List<float> zInc, List<float> wInc, List<float> originalVec, int numInc)
+    {   
+
+        for(int i = 0; i < numInc; i++)
+        {
+            originalVec[0] = DotProduct(originalVec, xInc);
+            originalVec[1] = DotProduct(originalVec, yInc);
+            originalVec[2] = DotProduct(originalVec, zInc);
+            originalVec[3] = DotProduct(originalVec, wInc);
+        }
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
 
-       
+        int numBalls = 5000;
 
-        
-
+        //instantiate sample sphere to clone other spheres from
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         var sphereRenderer = sphere.GetComponent<Renderer>();
         sphereRenderer.material.SetColor("_Color", Color.red);
         sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
-
+        //range from 4d origin to generate balls
         float initRange = 0.4f;
 
         //initialize balls at random positions around origin with scale untransformed 
-        for (int i = 0; i < 2000; i++)
+        for (int i = 0; i < numBalls; i++)
         {
             //initialize ball as a 4d vector and add to balls list
             List<float> ball = new List<float>() {UnityEngine.Random.Range(-initRange, initRange),
@@ -134,7 +135,7 @@ public class FourDim : MonoBehaviour
             ballList.Add(Instantiate(sphere, new Vector3(projected[0], projected[1], projected[2]), Quaternion.identity));
 
         }
-
+        //Hide original model sphere
         sphere.SetActive(false);
 
     }
@@ -147,7 +148,7 @@ public class FourDim : MonoBehaviour
         float factor = Time.deltaTime * speed;
 
 
-
+        //rotation matrix factors
         alpha = 3*factor;
         beta = 5*factor;
         gamma = 4*factor;
@@ -156,22 +157,29 @@ public class FourDim : MonoBehaviour
         nu = 7*factor;
 
         xUpdate = new List<float>() { 1, alpha, beta, gamma };
-        yUpdate = new List<float>() { -alpha, 1, delta, epsilon };
+        yUpdate = new List<float>() { -alpha, 1, delta, epsilon};
         zUpdate = new List<float>() { -beta, -delta, 1, nu };
         wUpdate = new List<float>() { -gamma, -epsilon, -nu, 1 };
+
+        List<float> RMCOne = new List<float>() { 1, 0, 0, 0 };
+        List<float> RMCTwo = new List<float>() { 0, 1, 0, 0 };
+        List<float> RMCThree = new List<float>() { 0, 0, 1, 0 };
+        List<float> RMCFour = new List<float>() { 0, 0, 0, 1 };
+
+        //consolidate rotation matrix
+        multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCOne, 100);
+        multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCTwo, 100);
+        multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCThree, 100);
+        multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCFour, 100);
+
 
         //update position loop x, y, z, w positions
         for (int i = 0; i < balls.Count; i++)
         {
-            for (int j = 0; j < 100; j++)
-            {
-                balls[i][0] = DotProduct(xUpdate, balls[i]);
-                balls[i][1] = DotProduct(yUpdate, balls[i]);
-                balls[i][2] = DotProduct(zUpdate, balls[i]);
-                balls[i][3] = DotProduct(wUpdate, balls[i]);
-                
+           
+            //apply consolidated rotation matrix to ball
+            multiIncrement(RMCOne, RMCTwo, RMCThree, RMCFour, balls[i], 1);
 
-            }
             //project 4d ball vector to 3d ball vector (vector = position) and update rendered ball position
             List<float> projected = Projected(balls[i]);
             ballList[i].transform.position = new Vector3(projected[0], projected[1], projected[2]);
@@ -180,11 +188,15 @@ public class FourDim : MonoBehaviour
 
             //Update ball scale with uniform and directional scaling thorugh matrix transform
 
+            //find uniform scalin
             float S = ProjectedR(balls[i]);
+            //find additional pi direction scaling
             float Sprime = (float)Math.Sqrt((double)DotProduct(projected, projected) + 1);
-         
+            
+            //apply scales (additional scales in z direction)
             ballList[i].transform.localScale = new Vector3(S*fourDR, S*fourDR, S*Sprime*fourDR);
 
+            //rotate z direction to pi direction
             ballList[i].transform.rotation = Quaternion.LookRotation(ballList[i].transform.position);
 
 
