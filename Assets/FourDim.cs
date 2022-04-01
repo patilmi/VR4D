@@ -7,9 +7,10 @@ public class FourDim : MonoBehaviour
 {
     List<List<float>> balls = new List<List<float>>();
     List<GameObject> ballList = new List<GameObject>();
-    List<float> eye = new List<float>() {0, 0, 0, 1};
     List<float> wHat = new List<float>() {0, 0, 0, 1};
-    float fourDR = 0.03f;
+    float fourDR = 0.015f;
+    float maxDistance = 0f;
+
 
 
     float alpha, beta, gamma, delta, epsilon, nu;
@@ -110,7 +111,7 @@ public class FourDim : MonoBehaviour
     void Start()
     {
 
-        int numBalls = 5000;
+        int numBalls = 4000;
 
         //instantiate sample sphere to clone other spheres from
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -120,6 +121,7 @@ public class FourDim : MonoBehaviour
 
         //range from 4d origin to generate balls
         float initRange = 0.4f;
+        maxDistance = (1f + initRange) * (1f + initRange);
 
         //initialize balls at random positions around origin with scale untransformed 
         for (int i = 0; i < numBalls; i++)
@@ -183,7 +185,15 @@ public class FourDim : MonoBehaviour
             //project 4d ball vector to 3d ball vector (vector = position) and update rendered ball position
             List<float> projected = Projected(balls[i]);
             ballList[i].transform.position = new Vector3(projected[0], projected[1], projected[2]);
-            
+
+            float distanceFromEye = DotProduct(VectorsSubtracted(balls[i], wHat), VectorsSubtracted(balls[i], wHat));
+
+            ballList[i].GetComponent<Renderer>().material.color = new Color(1, distanceFromEye/maxDistance, distanceFromEye / maxDistance);
+
+
+
+
+
 
 
             //Update ball scale with uniform and directional scaling thorugh matrix transform
