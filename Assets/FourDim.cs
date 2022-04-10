@@ -13,6 +13,8 @@ public class FourDim : MonoBehaviour
     float fourDR = 0.015f;
     float maxDistance;
 
+    Matrix4x4 rotation = new Matrix4x4();
+
     float alpha, beta, gamma, delta, epsilon, nu;
     Vector4 xUpdate, yUpdate, zUpdate, wUpdate;
 
@@ -74,14 +76,14 @@ public class FourDim : MonoBehaviour
     //    return scaled;
     //}
 
-    Vector3 Projected(Vector4 fourDpoint)
+    Vector4 Projected(Vector4 fourDpoint)
     {
         float pDotDub = Vector4.Dot(fourDpoint, wHat);
         Vector4 projected = fourDpoint - pDotDub * wHat;
         float scaleDown = 1 / (1 - pDotDub);
         projected = scaleDown * projected;
 
-        return (Vector3)projected;
+        return projected;
 
     }
 
@@ -186,6 +188,16 @@ public class FourDim : MonoBehaviour
         }
     }
 
+    Matrix4x4 getRotation(Matrix4x4 rotation, int increments)
+    {
+        while(increments != 1)
+        {
+            rotation = rotation * rotation;
+            increments /= 2;
+        }
+        return rotation;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -205,7 +217,7 @@ public class FourDim : MonoBehaviour
         //createSphereSurface(sphere, numBalls, initRange);
         createCube(sphere, numBalls, initRange);
 
-        //sphere.SetActive(false);
+        sphere.SetActive(false);
 
     }
 
@@ -230,24 +242,33 @@ public class FourDim : MonoBehaviour
         zUpdate = new Vector4(-beta, -delta, 1, nu);
         wUpdate = new Vector4(-gamma, -epsilon, -nu, 1);
 
-        Vector4 RMCOne = new Vector4(1, 0, 0, 0);
-        Vector4 RMCTwo = new Vector4(0, 1, 0, 0 );
-        Vector4 RMCThree = new Vector4(0, 0, 1, 0 );
-        Vector4 RMCFour = new Vector4(0, 0, 0, 1 );
+        rotation.SetRow(0, xUpdate);
+        rotation.SetRow(1, yUpdate);
+        rotation.SetRow(2, zUpdate);
+        rotation.SetRow(3, wUpdate);
 
-        //consolidate rotation matrix
-        RMCOne = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCOne, 100);
-        RMCTwo = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCTwo, 100);
-        RMCThree = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCThree, 100);
-        RMCFour = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCFour, 100);
+        rotation = getRotation(rotation, 128);
+
+
+        //Vector4 RMCOne = new Vector4(1, 0, 0, 0);
+        //Vector4 RMCTwo = new Vector4(0, 1, 0, 0 );
+        //Vector4 RMCThree = new Vector4(0, 0, 1, 0);
+        //Vector4 RMCFour = new Vector4(0, 0, 0, 1);
+
+        ////consolidate rotation matrix
+        //RMCOne = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCOne, 100);
+        //RMCTwo = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCTwo, 100);
+        //RMCThree = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCThree, 100);
+        //RMCFour = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCFour, 100);
 
 
         //update position loop x, y, z, w positions
         for (int i = 0; i < balls.Count; i++)
         {
-           
+
             //apply consolidated rotation matrix to ball
-            balls[i] = multiIncrement(RMCOne, RMCTwo, RMCThree, RMCFour, balls[i], 1);
+            //balls[i] = multiIncrement(RMCOne, RMCTwo, RMCThree, RMCFour, balls[i], 1);
+            balls[i] = rotation * balls[i];
 
             //project 4d ball vector to 3d ball vector (vector = position) and update rendered ball position
             Vector3 projected = Projected(balls[i]);
