@@ -5,113 +5,192 @@ using UnityEngine;
 
 public class FourDim : MonoBehaviour
 {
-    List<List<float>> balls = new List<List<float>>();
+    //use arrays?
+    List<Vector4> balls = new List<Vector4>();
     List<GameObject> ballList = new List<GameObject>();
-    List<float> wHat = new List<float>() {0, 0, 0, 1};
+    Vector4 wHat = new Vector4(0, 0, 0, 1);
+    Vector4 origin = new Vector4(0, 0, 0, 0);
     float fourDR = 0.015f;
-    float maxDistance = 0f;
-
-
+    float maxDistance;
 
     float alpha, beta, gamma, delta, epsilon, nu;
-    List<float> xUpdate, yUpdate, zUpdate, wUpdate;
+    Vector4 xUpdate, yUpdate, zUpdate, wUpdate;
 
     
 
-    float DotProduct(List<float> left, List<float> right)
+    //float Vector4.Dot(Vector4 left, Vector4 right)
+    //{
+    //    if (left.Count != right.Count)
+    //    {
+    //        throw new ArgumentException("Vectors have mismatched dimension");
+    //    }
+    //    float sum = 0;
+    //    for (int i = 0; i < left.Count; i++)
+    //    {
+    //        sum += left[i] * right[i];
+    //    }
+    //    return sum;
+    //}
+
+    //Vector4 VectorsSummed(Vector4 left, Vector4 right)
+    //{
+    //    if (left.Count != right.Count)
+    //    {
+    //        throw new ArgumentException("Vectors have mismatched dimension");
+    //    }
+    //    Vector4 result = new Vector4();
+    //    for (int i = 0; i < left.Count; i++)
+    //    {
+    //        result.Add(left[i] + right[i]);
+    //    }
+
+    //    return result;
+    //}
+
+
+    //Vector4 VectorsSubtracted(Vector4 left, Vector4 right)
+    //{
+    //    if (left.Count != right.Count)
+    //    {
+    //        throw new ArgumentException("Vectors have mismatched dimension");
+    //    }
+    //    Vector4 result = new Vector4() {};
+    //    for (int i = 0; i < left.Count; i++)
+    //    {
+    //        result.Add(left[i] - right[i]);
+    //    }
+
+    //    return result;
+    //}
+
+    //Vector4 VectorScaled(float scale, Vector4 toScale)
+    //{
+    //    Vector4 scaled = new Vector4(toScale);
+    //    for (int i = 0; i < toScale.Count; i++)
+    //    {
+    //        scaled[i] *= scale;
+    //    }
+
+    //    return scaled;
+    //}
+
+    Vector3 Projected(Vector4 fourDpoint)
     {
-        if (left.Count != right.Count)
-        {
-            throw new ArgumentException("Vectors have mismatched dimension");
-        }
-        float sum = 0;
-        for (int i = 0; i < left.Count; i++)
-        {
-            sum += left[i] * right[i];
-        }
-        return sum;
-    }
-
-    List<float> VectorsSummed(List<float> left, List<float> right)
-    {
-        if (left.Count != right.Count)
-        {
-            throw new ArgumentException("Vectors have mismatched dimension");
-        }
-        List<float> result = new List<float>();
-        for (int i = 0; i < left.Count; i++)
-        {
-            result.Add(left[i] + right[i]);
-        }
-
-        return result;
-    }
-
-
-    List<float> VectorsSubtracted(List<float> left, List<float> right)
-    {
-        if (left.Count != right.Count)
-        {
-            throw new ArgumentException("Vectors have mismatched dimension");
-        }
-        List<float> result = new List<float>() {};
-        for (int i = 0; i < left.Count; i++)
-        {
-            result.Add(left[i] - right[i]);
-        }
-
-        return result;
-    }
-
-    List<float> VectorScaled(float scale, List<float> toScale)
-    {
-        List<float> scaled = new List<float>(toScale);
-        for (int i = 0; i < toScale.Count; i++)
-        {
-            scaled[i] *= scale;
-        }
-
-        return scaled;
-    }
-
-    List<float> Projected(List<float> fourDpoint)
-    {
-        float pDotDub = DotProduct(fourDpoint, wHat);
-        List<float> projected = VectorsSubtracted(fourDpoint, VectorScaled(pDotDub, wHat));
+        float pDotDub = Vector4.Dot(fourDpoint, wHat);
+        Vector4 projected = fourDpoint - pDotDub * wHat;
         float scaleDown = 1 / (1 - pDotDub);
-        projected = VectorScaled(scaleDown, projected);
-        projected.RemoveAt(3);
+        projected = scaleDown * projected;
 
-        return projected;
+        return (Vector3)projected;
 
     }
 
 
     //takes in 4d ball location
-    float ProjectedR(List<float> fourDpoint)
+    float UniformProjectedRscale(Vector4 fourDpoint)
     {
-        float S = 1 / (1 - DotProduct(fourDpoint, wHat));
+        float S = 1 / (1 - Vector4.Dot(fourDpoint, wHat));
         return S;
     }
 
-    void multiIncrement(List<float> xInc, List<float> yInc, List<float> zInc, List<float> wInc, List<float> originalVec, int numInc)
+    Vector4 multiIncrement(Vector4 xInc, Vector4 yInc, Vector4 zInc, Vector4 wInc, Vector4 originalVec, int numInc)
     {   
-
+        //Save original vector to update
         for(int i = 0; i < numInc; i++)
         {
-            originalVec[0] = DotProduct(originalVec, xInc);
-            originalVec[1] = DotProduct(originalVec, yInc);
-            originalVec[2] = DotProduct(originalVec, zInc);
-            originalVec[3] = DotProduct(originalVec, wInc);
+            //Vector4 ogCopy = new Vector4(originalVec);
+            originalVec[0] = Vector4.Dot(originalVec, xInc);
+            originalVec[1] = Vector4.Dot(originalVec, yInc);
+            originalVec[2] = Vector4.Dot(originalVec, zInc);
+            originalVec[3] = Vector4.Dot(originalVec, wInc);
+
+
         }
+
+        return originalVec;
         
+    }
+
+    //float vSquared(Vector4 v)
+    //{
+    //    return Vector4.Dot(v, v);
+    //}
+
+    float dSquared(Vector4 one, Vector4 two)
+    {
+        return Vector4.SqrMagnitude(one - two);
+    }
+
+
+    void createSphere(GameObject sphere, int count, float initRange)
+    {
+
+        int i = 0;
+        while (i < count)
+        {
+            //initialize ball as a 4d vector and add to balls list
+            Vector4 ball = new Vector4(UnityEngine.Random.Range(-initRange, initRange),
+                UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange));
+
+            Vector3 projected = Projected(ball);
+            if (dSquared(ball, origin) < initRange * initRange)
+            {
+                balls.Add(ball);
+                ballList.Add(Instantiate(sphere, projected, Quaternion.identity));
+                ++i;
+
+            }
+            //project ball to 3d vector and create a sphere copy with projected coordinates;
+        }
+
+    }
+
+    void createSphereSurface(GameObject sphere, int count, float initRange)
+    {
+
+        int i = 0;
+        while (i < count)
+        {
+            //initialize ball as a 4d vector and add to balls list
+            Vector4 ball = new Vector4(UnityEngine.Random.Range(-initRange, initRange),
+                UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange));
+
+            Vector3 projected = Projected(ball);
+            if (dSquared(ball, origin) < initRange * initRange && dSquared(ball, origin) > (initRange - initRange/20) * (initRange - initRange / 20))
+            {
+                balls.Add(ball);
+                ballList.Add(Instantiate(sphere, projected, Quaternion.identity));
+                ++i;
+
+            }
+            //project ball to 3d vector and create a sphere copy with projected coordinates;
+        }
+
+    }
+
+
+
+    void createCube(GameObject sphere, int count, float initRange)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            Vector4 ball = new Vector4(UnityEngine.Random.Range(-initRange, initRange),
+                UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange));
+
+            Vector3 projected = Projected(ball);
+         
+            balls.Add(ball);
+            ballList.Add(Instantiate(sphere, projected, Quaternion.identity));
+    
+            //project ball to 3d vector and create a sphere copy with projected coordinates;
+        }
     }
 
     // Start is called before the first frame update
     void Start()
     {
 
-        int numBalls = 4000;
+        int numBalls = 3000;
 
         //instantiate sample sphere to clone other spheres from
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -120,25 +199,13 @@ public class FourDim : MonoBehaviour
         sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 
         //range from 4d origin to generate balls
-        float initRange = 0.4f;
+        float initRange = 0.5f;
         maxDistance = (1f + initRange) * (1f + initRange);
 
-        //initialize balls at random positions around origin with scale untransformed 
-        for (int i = 0; i < numBalls; i++)
-        {
-            //initialize ball as a 4d vector and add to balls list
-            List<float> ball = new List<float>() {UnityEngine.Random.Range(-initRange, initRange),
-                UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange)};
-            balls.Add(ball);
+        //createSphereSurface(sphere, numBalls, initRange);
+        createCube(sphere, numBalls, initRange);
 
-
-            //project ball to 3d vector and create a sphere copy with projected coordinates;
-            List<float> projected = Projected(ball);
-            ballList.Add(Instantiate(sphere, new Vector3(projected[0], projected[1], projected[2]), Quaternion.identity));
-
-        }
-        //Hide original model sphere
-        sphere.SetActive(false);
+        //sphere.SetActive(false);
 
     }
 
@@ -158,21 +225,21 @@ public class FourDim : MonoBehaviour
         epsilon = 2*factor;
         nu = 7*factor;
 
-        xUpdate = new List<float>() { 1, alpha, beta, gamma };
-        yUpdate = new List<float>() { -alpha, 1, delta, epsilon};
-        zUpdate = new List<float>() { -beta, -delta, 1, nu };
-        wUpdate = new List<float>() { -gamma, -epsilon, -nu, 1 };
+        xUpdate = new Vector4(1, alpha, beta, gamma);
+        yUpdate = new Vector4(-alpha, 1, delta, epsilon);
+        zUpdate = new Vector4(-beta, -delta, 1, nu);
+        wUpdate = new Vector4(-gamma, -epsilon, -nu, 1);
 
-        List<float> RMCOne = new List<float>() { 1, 0, 0, 0 };
-        List<float> RMCTwo = new List<float>() { 0, 1, 0, 0 };
-        List<float> RMCThree = new List<float>() { 0, 0, 1, 0 };
-        List<float> RMCFour = new List<float>() { 0, 0, 0, 1 };
+        Vector4 RMCOne = new Vector4(1, 0, 0, 0);
+        Vector4 RMCTwo = new Vector4(0, 1, 0, 0 );
+        Vector4 RMCThree = new Vector4(0, 0, 1, 0 );
+        Vector4 RMCFour = new Vector4(0, 0, 0, 1 );
 
         //consolidate rotation matrix
-        multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCOne, 100);
-        multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCTwo, 100);
-        multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCThree, 100);
-        multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCFour, 100);
+        RMCOne = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCOne, 100);
+        RMCTwo = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCTwo, 100);
+        RMCThree = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCThree, 100);
+        RMCFour = multiIncrement(xUpdate, yUpdate, zUpdate, wUpdate, RMCFour, 100);
 
 
         //update position loop x, y, z, w positions
@@ -180,36 +247,29 @@ public class FourDim : MonoBehaviour
         {
            
             //apply consolidated rotation matrix to ball
-            multiIncrement(RMCOne, RMCTwo, RMCThree, RMCFour, balls[i], 1);
+            balls[i] = multiIncrement(RMCOne, RMCTwo, RMCThree, RMCFour, balls[i], 1);
 
             //project 4d ball vector to 3d ball vector (vector = position) and update rendered ball position
-            List<float> projected = Projected(balls[i]);
-            ballList[i].transform.position = new Vector3(projected[0], projected[1], projected[2]);
+            Vector3 projected = Projected(balls[i]);
+            ballList[i].transform.position = projected;
 
-            float distanceFromEye = DotProduct(VectorsSubtracted(balls[i], wHat), VectorsSubtracted(balls[i], wHat));
+            float distanceFromEye = dSquared(balls[i], wHat);
 
-            ballList[i].GetComponent<Renderer>().material.color = new Color(1, distanceFromEye/maxDistance, distanceFromEye / maxDistance);
-
-
-
-
-
+            ballList[i].GetComponent<Renderer>().material.color = new Color(1, distanceFromEye / maxDistance, distanceFromEye / maxDistance);
 
 
             //Update ball scale with uniform and directional scaling thorugh matrix transform
 
-            //find uniform scalin
-            float S = ProjectedR(balls[i]);
+            //find uniform scaling
+            float S = UniformProjectedRscale(balls[i]);
             //find additional pi direction scaling
-            float Sprime = (float)Math.Sqrt((double)DotProduct(projected, projected) + 1);
+            float Sprime = (float)Math.Sqrt((double)Vector4.Dot(projected, projected) + 1);
             
             //apply scales (additional scales in z direction)
             ballList[i].transform.localScale = new Vector3(S*fourDR, S*fourDR, S*Sprime*fourDR);
 
             //rotate z direction to pi direction
             ballList[i].transform.rotation = Quaternion.LookRotation(ballList[i].transform.position);
-
-
 
         }
     }
