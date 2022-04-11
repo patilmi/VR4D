@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\FourDim.cs" />
+    <Compile Include="Assets\FourDMath.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
