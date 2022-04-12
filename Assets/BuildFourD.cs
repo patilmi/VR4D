@@ -49,20 +49,45 @@ public class BuildFourD
     }
 
 
+    public static List<Vector4> BuildCube(List<Vector4> balls, int count, float initRange, bool filled = false, int facePairs = 4)
+    {
+        for (int i = 0; i < facePairs && count > 0; i++)
+        {
+            int j = 0;
+            while (j < count/facePairs)
+            {
+                Vector4 ball = new Vector4(Random.Range(-initRange, initRange), Random.Range(-initRange, initRange),
+                 Random.Range(-initRange, initRange), Random.Range(-initRange, initRange));
 
-    public static List<Vector4> CreateCube(List<Vector4> balls, int count, float initRange)
+                if (!filled)
+                {
+                    ball[i] = (i % 2 == 0) ? initRange : -initRange;
+                }
+                
+                balls.Add(ball);
+                count--;
+                j++;
+            }
+        }
+        return balls;
+
+    }
+
+    public static List<Vector4> BuildIntersectingPlanes(List<Vector4> balls, int count, float initRange, int numPlanes = 4)
     {
         for (int i = 0; i < count; i++)
         {
             Vector4 ball = new Vector4(Random.Range(-initRange, initRange), Random.Range(-initRange, initRange),
                  Random.Range(-initRange, initRange), Random.Range(-initRange, initRange));
 
+            ball[i % numPlanes] = 0f;
             balls.Add(ball);
 
-            //project ball to 3d vector and create a sphere copy with projected coordinates;
         }
-
         return balls;
     }
+
+ 
+    
 
 }

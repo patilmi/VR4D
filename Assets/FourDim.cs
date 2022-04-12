@@ -11,6 +11,7 @@ public class FourDim : MonoBehaviour
     
     float fourDSphereRadius = 0.015f;
     float maxDfromEye;
+    float minDfromEye;
 
     Matrix4x4 FourDRotationMatrix = new Matrix4x4();
 
@@ -122,26 +123,51 @@ public class FourDim : MonoBehaviour
 
     }
 
+    Color ApplyFog(Vector4 ball, float grayscale)
+    {
+        float distanceFromEye = FourDMath.DistanceSquared(ball, FourDMath.wHat);
+        float distanceOverMaxDistance = (distanceFromEye) / (maxDfromEye);
+
+        Color gray = new Color(grayscale, grayscale, grayscale);
+        Color fogged = new Color(1 - ((1-grayscale) * distanceOverMaxDistance), grayscale * distanceOverMaxDistance, grayscale * distanceOverMaxDistance);
+        return fogged;
+
+    }
+
 
     // Start is called before the first frame update
     void Start()
     {
 
-        int numBalls = 1500;
+        int numBalls = 5000;
 
         //instantiate sample sphere to clone other spheres from
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         var sphereRenderer = sphere.GetComponent<Renderer>();
+        Shader unlit = Shader.Find("Unlit/Color");
+
+        sphereRenderer.material.shader = unlit;
         sphereRenderer.material.SetColor("_Color", Color.red);
+        sphereRenderer.allowOcclusionWhenDynamic = false;
+        sphereRenderer.receiveShadows = false;
+        sphereRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
         sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+
+
+        var sphereCollider = sphere.GetComponent<SphereCollider>();
+        sphereCollider.enabled = false;
 
         //range from 4d origin to generate balls
         float initRange = 0.5f;
         maxDfromEye = (1f + initRange) * (1f + initRange);
+        minDfromEye = (1f - initRange) * (1f - initRange);
 
         //CreateSphere(sphere, numBalls, initRange);
-        //CreateSphereSurface(sphere, numBalls, initRange);
-        balls = BuildFourD.CreateCube(balls, numBalls, initRange);
+        //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
+        //balls = BuildFourD.BuildCube(balls, numBalls, initRange);
+        balls = BuildFourD.BuildIntersectingPlanes(balls, numBalls, initRange, 1);
         UpdateBallList(sphere);
 
         sphere.SetActive(false);
@@ -149,8 +175,6 @@ public class FourDim : MonoBehaviour
     }
 
     
-    
-
 
     // Update is called once per frame
     void Update()
@@ -172,7 +196,7 @@ public class FourDim : MonoBehaviour
 
 
             float distanceFromEye = FourDMath.DistanceSquared(balls[i], FourDMath.wHat);
-            ballList[i].GetComponent<Renderer>().material.color = new Color(1, distanceFromEye / maxDfromEye, distanceFromEye / maxDfromEye);
+            ballList[i].GetComponent<Renderer>().material.color = ApplyFog(balls[i], 0.9f);
 
 
             //Update ball scale with uniform and directional scaling thorugh matrix transform
