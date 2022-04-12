@@ -5,7 +5,8 @@ using System;
 
 public class FourDMath
 {
-    static Vector4 wHat = new Vector4(0, 0, 0, 1);
+    public static Vector4 wHat = new Vector4(0, 0, 0, 1);
+    public static Vector4 origin = new Vector4(0, 0, 0, 0);
     public static Vector4 Projection(Vector4 point)
     {
         float pDotDub = Vector4.Dot(point, wHat);
