@@ -8,95 +8,34 @@ public class FourDim : MonoBehaviour
     //use arrays?
     List<Vector4> balls = new List<Vector4>();
     List<GameObject> ballList = new List<GameObject>();
-    
+
     float fourDSphereRadius = 0.015f;
     float maxDfromEye;
     float minDfromEye;
 
     Matrix4x4 FourDRotationMatrix = new Matrix4x4();
 
-    
+
     float alpha, beta, gamma, delta, epsilon, nu;
     Vector4 rotationRowOne, rotationRowTwo, rotationRowThree, rotationRowFour;
 
+    float[] paramsZero = {0, 3, 0, 3, 8, 2};
+    float[] paramsSet = {3, 5, 4, 3, 2, 7};
 
-    //void CreateSphere(GameObject sphere, int count, float initRange)
-    //{
-
-    //    int i = 0;
-    //    while (i < count)
-    //    {
-    //        //initialize ball as a 4d vector and add to balls list
-    //        Vector4 ball = new Vector4(UnityEngine.Random.Range(-initRange, initRange),
-    //            UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange));
-
-    //        Vector3 projected = FourDMath.Projection(ball);
-    //        if (FourDMath.DistanceSquared(ball, origin) < initRange * initRange)
-    //        {
-    //            balls.Add(ball);
-    //            ballList.Add(Instantiate(sphere, projected, Quaternion.identity));
-    //            ++i;
-
-    //        }
-    //        //project ball to 3d vector and create a sphere copy with projected coordinates;
-    //    }
-
-    //}
-
-    //void CreateSphereSurface(GameObject sphere, int count, float initRange)
-    //{
-
-    //    int i = 0;
-    //    while (i < count)
-    //    {
-    //        //initialize ball as a 4d vector and add to balls list
-    //        Vector4 ball = new Vector4(UnityEngine.Random.Range(-initRange, initRange),
-    //            UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange));
-
-    //        Vector3 projected = FourDMath.Projection(ball);
-    //        float distanceFromOrigin = FourDMath.DistanceSquared(ball, origin);
-    //        if (distanceFromOrigin < initRange * initRange &&  distanceFromOrigin > (initRange - initRange/20) * (initRange - initRange / 20))
-    //        {
-    //            balls.Add(ball);
-    //            ballList.Add(Instantiate(sphere, projected, Quaternion.identity));
-    //            ++i;
-
-    //        }
-    //        //project ball to 3d vector and create a sphere copy with projected coordinates;
-    //    }
-
-    //}
-
-
-
-    //void CreateCube(GameObject sphere, int count, float initRange)
-    //{
-    //    for (int i = 0; i < count; i++)
-    //    {
-    //        Vector4 ball = new Vector4(UnityEngine.Random.Range(-initRange, initRange),
-    //            UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange), UnityEngine.Random.Range(-initRange, initRange));
-
-    //        Vector3 projected = FourDMath.Projection(ball);
-         
-    //        balls.Add(ball);
-    //        ballList.Add(Instantiate(sphere, projected, Quaternion.identity));
-    
-    //        //project ball to 3d vector and create a sphere copy with projected coordinates;
-    //    }
-    //}
-
-
-
-    void UpdateRotationMatrix(float deltaTime)
+    void UpdateRotationMatrix(float deltaTime, float timeSec, float[] paramValues)
     {
         float angularSpeed = 0.0003f;
         float angleStepSize = deltaTime * angularSpeed;
-        alpha = 3 * angleStepSize;
-        beta = 5 * angleStepSize;
-        gamma = 4 * angleStepSize;
-        delta = 3 * angleStepSize;
-        epsilon = 2 * angleStepSize;
-        nu = 7 * angleStepSize;
+
+        //*Mathf.Sin(timeSec)
+  
+
+        alpha = paramValues[0] * angleStepSize;
+        beta = paramValues[1] * angleStepSize;
+        gamma = paramValues[2] * angleStepSize;
+        delta = paramValues[3] * Mathf.Sin(7 * timeSec) * angleStepSize;
+        epsilon = paramValues[4] * angleStepSize;
+        nu = paramValues[5] * Mathf.Sin(10*timeSec) * angleStepSize;
 
         rotationRowOne = new Vector4(1, alpha, beta, gamma);
         rotationRowTwo = new Vector4(-alpha, 1, delta, epsilon);
@@ -126,7 +65,7 @@ public class FourDim : MonoBehaviour
     Color ApplyFog(Vector4 ball, float grayscale)
     {
         float distanceFromEye = FourDMath.DistanceSquared(ball, FourDMath.wHat);
-        float distanceOverMaxDistance = (distanceFromEye) / (maxDfromEye);
+        float distanceOverMaxDistance = (distanceFromEye - minDfromEye) / (maxDfromEye - minDfromEye);
 
         Color gray = new Color(grayscale, grayscale, grayscale);
         Color fogged = new Color(1 - ((1-grayscale) * distanceOverMaxDistance), grayscale * distanceOverMaxDistance, grayscale * distanceOverMaxDistance);
@@ -160,14 +99,15 @@ public class FourDim : MonoBehaviour
         sphereCollider.enabled = false;
 
         //range from 4d origin to generate balls
-        float initRange = 0.5f;
-        maxDfromEye = (1f + initRange) * (1f + initRange);
-        minDfromEye = (1f - initRange) * (1f - initRange);
+        float initRangeCube = 0.45f;
+        float initRangePlane = 0.5f;
+        maxDfromEye = (1f + 2*initRangeCube) * (1f + 2*initRangeCube);
+        minDfromEye = (1f - 2*initRangeCube) * (1f - 2*initRangeCube);
 
         //CreateSphere(sphere, numBalls, initRange);
         //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
-        //balls = BuildFourD.BuildCube(balls, numBalls, initRange);
-        balls = BuildFourD.BuildIntersectingPlanes(balls, numBalls, initRange, 1);
+        balls = BuildFourD.BuildCube(balls, numBalls, initRangeCube);
+        //balls = BuildFourD.BuildIntersectingPlanes(balls, numBalls, initRangePlane, 1);
         UpdateBallList(sphere);
 
         sphere.SetActive(false);
@@ -180,7 +120,8 @@ public class FourDim : MonoBehaviour
     void Update()
     {
 
-        UpdateRotationMatrix(Time.deltaTime);
+        UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, paramsZero);
+        
 
         //update position loop x, y, z, w positions
         for (int i = 0; i < balls.Count; i++)
@@ -194,8 +135,6 @@ public class FourDim : MonoBehaviour
             ballList[i].transform.position = projected;
 
 
-
-            float distanceFromEye = FourDMath.DistanceSquared(balls[i], FourDMath.wHat);
             ballList[i].GetComponent<Renderer>().material.color = ApplyFog(balls[i], 0.9f);
 
 
