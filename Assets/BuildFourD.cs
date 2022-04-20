@@ -49,7 +49,7 @@ public class BuildFourD
     }
 
 
-    public static List<Vector4> BuildCube(List<Vector4> balls, int count, float initRange, bool filled = false, int facePairs = 4)
+    public static void BuildCube(List<FourDPoint> balls, int count, float initRange, bool filled = false, int facePairs = 4)
     {
 
         int total = count;
@@ -66,12 +66,11 @@ public class BuildFourD
                     ball[i] = (i % 2 == 0) ? initRange : -initRange;
                 }
                 
-                balls.Add(ball);
+                balls.Add(new FourDPoint(ball));
                 count--;
                 j++;
             }
         }
-        return balls;
 
     }
 

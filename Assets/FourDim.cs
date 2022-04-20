@@ -6,8 +6,8 @@ using UnityEngine;
 public class FourDim : MonoBehaviour
 {
     //use arrays?
-    List<Vector4> balls = new List<Vector4>();
-    List<GameObject> ballList = new List<GameObject>();
+    List<FourDPoint> balls = new List<FourDPoint>();
+    //List<GameObject> ballList = new List<GameObject>();
 
     float fourDSphereRadius = 0.015f;
     //float maxDfromEye;
@@ -60,7 +60,9 @@ public class FourDim : MonoBehaviour
     {
         for (int i = 0; i < balls.Count; i++)
         {
-            ballList.Add(Instantiate(sphere, FourDMath.Projection(balls[i]), Quaternion.identity));
+            balls[i].sphere = (Instantiate(sphere, FourDMath.Projection(balls[i].point), Quaternion.identity));
+            balls[i].sphereRenderer = balls[i].sphere.GetComponent<Renderer>();
+
         }
 
 
@@ -115,7 +117,7 @@ public class FourDim : MonoBehaviour
 
         //CreateSphere(sphere, numBalls, initRange);
         //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
-        balls = BuildFourD.BuildCube(balls, numBalls, initRangeCube);
+        BuildFourD.BuildCube(balls, numBalls, initRangeCube);
         //balls = BuildFourD.BuildIntersectingPlanes(balls, numBalls, initRangePlane, 1);
         UpdateBallList(sphere);
 
@@ -137,17 +139,19 @@ public class FourDim : MonoBehaviour
         {
 
             //Rotate 4d Sphere
-            balls[i] = FourDRotationMatrix * balls[i];
+            balls[i].point = FourDRotationMatrix * balls[i].point;
 
             //project 4d ball vector to 3d ball vector (vector = position) and update rendered ball position
-            Vector3 projected = FourDMath.Projection(balls[i]);
-            ballList[i].transform.position = projected;
+            Vector3 projected = FourDMath.Projection(balls[i].point);
+            balls[i].sphere.transform.position = projected;
 
 
             //ballList[i].GetComponent<Renderer>().material.color = ApplyFog(balls[i], 0.9f);
 
-            var ballRenderer = ballList[i].GetComponent<Renderer>();
-            ballRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i] - FourDMath.wHat));
+            balls[i].sphereRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i].point - FourDMath.wHat));
+
+            //var ballRenderer = ballList[i].GetComponent<Renderer>();
+            //ballRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i] - FourDMath.wHat));
             //Color ballColor = ballRenderer.material.color;
             //ballColor[0] = 1f;
             //ballColor[1] = 0f;
@@ -160,16 +164,16 @@ public class FourDim : MonoBehaviour
 
 
             //Update ball scale with uniform and directional scaling thorugh matrix transform
-            float S = FourDMath.ShortRadiusScaling(balls[i]);
+            float S = FourDMath.ShortRadiusScaling(balls[i].point);
 
             //find additional pi direction scaling
             float Sprime = FourDMath.LongRadiusScaling(projected);
             
             //apply scales (additional scales in z direction)
-            ballList[i].transform.localScale = new Vector3(S*fourDSphereRadius, S*fourDSphereRadius, S*Sprime*fourDSphereRadius);
+            balls[i].sphere.transform.localScale = new Vector3(S*fourDSphereRadius, S*fourDSphereRadius, S*Sprime*fourDSphereRadius);
 
             //rotate z direction to pi direction
-            ballList[i].transform.rotation = Quaternion.LookRotation(ballList[i].transform.position);
+            balls[i].sphere.transform.rotation = Quaternion.LookRotation(balls[i].sphere.transform.position);
 
         }
     }
