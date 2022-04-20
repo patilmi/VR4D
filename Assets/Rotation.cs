@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rotation : MonoBehaviour
+public class Rotation
 {
     // Start is called before the first frame update
-    List<RotationComponent> fullRotation;
+    public List<RotationComponent> fullRotation;
 
     public Rotation(List<RotationComponent> components)
     {
@@ -15,6 +15,11 @@ public class Rotation : MonoBehaviour
     public void AddRotation(RotationComponent component)
     {
         fullRotation.Add(component);
+    }
+
+    public float finalRoto(int index, float timeSec)
+    {
+        return fullRotation[index].value + (fullRotation[index].oscillationAmplitude * Mathf.Sin(fullRotation[index].oscillationFrequency * timeSec));
     }
 
 }

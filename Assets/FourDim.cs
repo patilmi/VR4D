@@ -13,7 +13,7 @@ public class FourDim : MonoBehaviour
     Matrix4x4 FourDRotationMatrix = new Matrix4x4();
 
 
-    float alpha, beta, gamma, delta, epsilon, nu;
+    //float alpha, beta, gamma, delta, epsilon, nu;
     Vector4 rotationRowOne, rotationRowTwo, rotationRowThree, rotationRowFour;
 
     float[] paramsZero = {0, 3, 0, 0, 6, 0};
@@ -36,8 +36,8 @@ public class FourDim : MonoBehaviour
 
     BuildConfig cubeSides;
 
-    //RotationComponent alpha, beta, gamma, delta, epsilon, nu;
-    List<RotationComponent> components;
+    RotationComponent alpha, beta, gamma, delta, epsilon, nu;
+    List<RotationComponent> components = new List<RotationComponent>();
     
 
     Rotation fullRoto;
@@ -47,7 +47,7 @@ public class FourDim : MonoBehaviour
 
 
 
-    void UpdateRotationMatrix(float deltaTime, float timeSec, float[] paramValues)
+    void UpdateRotationMatrix(float deltaTime, float timeSec, Rotation rotation)
     {
         float angularSpeed = 0.0003f;
         float angleStepSize = deltaTime * angularSpeed;
@@ -55,17 +55,17 @@ public class FourDim : MonoBehaviour
         //*Mathf.Sin(timeSec)
   
 
-        alpha = paramValues[0] * angleStepSize;
-        beta = paramValues[1] * angleStepSize;
-        gamma = paramValues[2] * angleStepSize;
-        delta = paramValues[3] * Mathf.Sin(7 * timeSec) * angleStepSize;
-        epsilon = paramValues[4] * angleStepSize;
-        nu = paramValues[5] * Mathf.Sin(10*timeSec) * angleStepSize;
+        float xy =  rotation.finalRoto(0, timeSec) * angleStepSize;
+        float xz = rotation.finalRoto(1, timeSec) * angleStepSize;
+        float xw = rotation.finalRoto(2, timeSec) * angleStepSize;
+        float yz = rotation.finalRoto(3, timeSec) * angleStepSize;
+        float yw = rotation.finalRoto(4, timeSec) * angleStepSize;
+        float zw = rotation.finalRoto(5, timeSec) * angleStepSize;
 
-        rotationRowOne = new Vector4(1, alpha, beta, gamma);
-        rotationRowTwo = new Vector4(-alpha, 1, delta, epsilon);
-        rotationRowThree = new Vector4(-beta, -delta, 1, nu);
-        rotationRowFour = new Vector4(-gamma, -epsilon, -nu, 1);
+        rotationRowOne = new Vector4(1, xy, xz, xw);
+        rotationRowTwo = new Vector4(-xy, 1, yz, yw);
+        rotationRowThree = new Vector4(-xz, -yz, 1, zw);
+        rotationRowFour = new Vector4(-xw, -yw, -zw, 1);
 
         FourDRotationMatrix.SetRow(0, rotationRowOne);
         FourDRotationMatrix.SetRow(1, rotationRowTwo);
@@ -122,14 +122,19 @@ public class FourDim : MonoBehaviour
 
         cubeSides = new BuildConfig(planeList);
 
-        //alpha = new RotationComponent(3, 0, 0);
-        //beta = new RotationComponent(0, 0, 0);
-        //gamma = new RotationComponent(0, 0, 0);
-        //delta = new RotationComponent(0, 0, 0);
-        //epsilon = new RotationComponent(0, 0, 0);
-        //nu = new RotationComponent(0, 0, 0);
+        alpha = new RotationComponent(3, 0, 0);
+        beta = new RotationComponent(6, 0, 0);
+        gamma = new RotationComponent(0, 0, 0);
+        delta = new RotationComponent(9, 1, 1);
+        epsilon = new RotationComponent(0, 0, 0);
+        nu = new RotationComponent(0, 0, 0);
 
-        //components.Add(alpha);
+        components.Add(alpha);
+        components.Add(beta);
+        components.Add(gamma);
+        components.Add(delta);
+        components.Add(epsilon);
+        components.Add(nu);
 
         fullRoto = new Rotation(components);
 
@@ -169,7 +174,7 @@ public class FourDim : MonoBehaviour
     void Update()
     {
 
-        UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, paramsSet);
+        UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, fullRoto);
         
 
         //update position loop x, y, z, w positions

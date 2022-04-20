@@ -5,9 +5,9 @@ using UnityEngine;
 public class RotationComponent
 {
 
-    float value;
-    float oscillationAmplitude;
-    float oscillationFrequency;
+    public float value;
+    public float oscillationAmplitude;
+    public float oscillationFrequency;
 
     public RotationComponent(float val, float amp, float freq)
     {
