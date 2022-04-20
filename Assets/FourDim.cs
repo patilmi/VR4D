@@ -10,17 +10,22 @@ public class FourDim : MonoBehaviour
     List<GameObject> ballList = new List<GameObject>();
 
     float fourDSphereRadius = 0.015f;
-    float maxDfromEye;
-    float minDfromEye;
+    //float maxDfromEye;
+    //float minDfromEye;
 
     Matrix4x4 FourDRotationMatrix = new Matrix4x4();
 
+ 
 
     float alpha, beta, gamma, delta, epsilon, nu;
     Vector4 rotationRowOne, rotationRowTwo, rotationRowThree, rotationRowFour;
 
     float[] paramsZero = {0, 3, 0, 3, 8, 2};
     float[] paramsSet = {3, 5, 4, 3, 2, 7};
+
+    Color ogBallColor = new Color(1f, 0f, 0f);
+    Color fogColor = new Color(0.9f, 0.9f, 0.9f);
+
 
     void UpdateRotationMatrix(float deltaTime, float timeSec, float[] paramValues)
     {
@@ -62,15 +67,19 @@ public class FourDim : MonoBehaviour
 
     }
 
-    Color ApplyFog(Vector4 ball, float grayscale)
+
+    Color ExponentialFog(float distance) 
     {
-        float distanceFromEye = FourDMath.DistanceSquared(ball, FourDMath.wHat);
-        float distanceOverMaxDistance = (distanceFromEye - minDfromEye) / (maxDfromEye - minDfromEye);
+        float lambda = -0.8f;
+        float decay = Mathf.Exp(lambda * distance);
+        Color fog = new Color(fogged(decay, ogBallColor[0], fogColor[0]), fogged(decay, ogBallColor[1], fogColor[1]),
+            fogged(decay, ogBallColor[2], fogColor[2]));
+        return fog;
+    }
 
-        Color gray = new Color(grayscale, grayscale, grayscale);
-        Color fogged = new Color(1 - ((1-grayscale) * distanceOverMaxDistance), grayscale * distanceOverMaxDistance, grayscale * distanceOverMaxDistance);
-        return fogged;
-
+    float fogged(float decay, float colorVal, float fogVal) 
+    {
+        return (colorVal * decay) + (fogVal * (1 - decay));
     }
 
 
@@ -78,7 +87,7 @@ public class FourDim : MonoBehaviour
     void Start()
     {
 
-        int numBalls = 5000;
+        int numBalls = 3000;
 
         //instantiate sample sphere to clone other spheres from
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -101,8 +110,8 @@ public class FourDim : MonoBehaviour
         //range from 4d origin to generate balls
         float initRangeCube = 0.45f;
         float initRangePlane = 0.5f;
-        maxDfromEye = (1f + 2*initRangeCube) * (1f + 2*initRangeCube);
-        minDfromEye = (1f - 2*initRangeCube) * (1f - 2*initRangeCube);
+        //maxDfromEye = Mathf.Sqrt((1f + 2*initRangeCube) * (1f + 2*initRangeCube));
+        //minDfromEye = Mathf.Sqrt((1f - 2*initRangeCube) * (1f - 2*initRangeCube));
 
         //CreateSphere(sphere, numBalls, initRange);
         //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
@@ -135,12 +144,24 @@ public class FourDim : MonoBehaviour
             ballList[i].transform.position = projected;
 
 
-            ballList[i].GetComponent<Renderer>().material.color = ApplyFog(balls[i], 0.9f);
+            //ballList[i].GetComponent<Renderer>().material.color = ApplyFog(balls[i], 0.9f);
+
+            var ballRenderer = ballList[i].GetComponent<Renderer>();
+            ballRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i] - FourDMath.wHat));
+            //Color ballColor = ballRenderer.material.color;
+            //ballColor[0] = 1f;
+            //ballColor[1] = 0f;
+            //ballColor[2] = 0f;
+
+            //ballRenderer.material.color = ballColor;
+
+
+
 
 
             //Update ball scale with uniform and directional scaling thorugh matrix transform
-
             float S = FourDMath.ShortRadiusScaling(balls[i]);
+
             //find additional pi direction scaling
             float Sprime = FourDMath.LongRadiusScaling(projected);
             

@@ -51,10 +51,12 @@ public class BuildFourD
 
     public static List<Vector4> BuildCube(List<Vector4> balls, int count, float initRange, bool filled = false, int facePairs = 4)
     {
+
+        int total = count;
         for (int i = 0; i < facePairs && count > 0; i++)
         {
             int j = 0;
-            while (j < count/facePairs)
+            while (j < total/facePairs)
             {
                 Vector4 ball = new Vector4(Random.Range(-initRange, initRange), Random.Range(-initRange, initRange),
                  Random.Range(-initRange, initRange), Random.Range(-initRange, initRange));
@@ -73,6 +75,9 @@ public class BuildFourD
 
     }
 
+
+
+
     public static List<Vector4> BuildIntersectingPlanes(List<Vector4> balls, int count, float initRange, int numPlanes = 4)
     {
         for (int i = 0; i < count; i++)
@@ -87,7 +92,19 @@ public class BuildFourD
         return balls;
     }
 
- 
-    
+    public static List<Vector4> BuildIntersectingPlanesClustered (List<Vector4> balls, int count, float initRange, int numPlanes = 4)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            Vector4 ball = new Vector4(Random.Range(-initRange, initRange), Random.Range(-initRange, initRange),
+                 Random.Range(-initRange, initRange), Random.Range(-initRange, initRange));
+
+            ball[i % numPlanes] = 0f;
+            balls.Add(ball);
+
+        }
+        return balls;
+    }
+
 
 }
