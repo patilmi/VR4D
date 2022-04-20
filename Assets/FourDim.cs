@@ -5,26 +5,46 @@ using UnityEngine;
 
 public class FourDim : MonoBehaviour
 {
-    //use arrays?
     List<FourDPoint> balls = new List<FourDPoint>();
-    //List<GameObject> ballList = new List<GameObject>();
 
     float fourDSphereRadius = 0.015f;
-    //float maxDfromEye;
-    //float minDfromEye;
+
 
     Matrix4x4 FourDRotationMatrix = new Matrix4x4();
 
- 
 
     float alpha, beta, gamma, delta, epsilon, nu;
     Vector4 rotationRowOne, rotationRowTwo, rotationRowThree, rotationRowFour;
 
-    float[] paramsZero = {0, 3, 0, 3, 8, 2};
+    float[] paramsZero = {0, 3, 0, 0, 6, 0};
     float[] paramsSet = {3, 5, 4, 3, 2, 7};
 
     Color ogBallColor = new Color(1f, 0f, 0f);
     Color fogColor = new Color(0.9f, 0.9f, 0.9f);
+
+    List<FourDPlane> planeList = new List<FourDPlane>();
+
+    FourDPlane side1 = new FourDPlane(500, 0, -0.5f, 0.4f);
+    FourDPlane side2 = new FourDPlane(500, 0, 0.5f, 0.4f);
+    FourDPlane side3 = new FourDPlane(500, 1, -0.5f, 0.4f);
+    FourDPlane side4 = new FourDPlane(500, 1, 0.5f, 0.4f);
+    FourDPlane side5 = new FourDPlane(500, 2, -0.5f, 0.4f);
+    FourDPlane side6 = new FourDPlane(500, 2, 0.5f, 0.4f);
+    FourDPlane side7 = new FourDPlane(500, 3, -0.5f, 0.4f);
+    FourDPlane side8 = new FourDPlane(500, 3, 0.5f, 0.4f);
+
+
+    BuildConfig cubeSides;
+
+    //RotationComponent alpha, beta, gamma, delta, epsilon, nu;
+    List<RotationComponent> components;
+    
+
+    Rotation fullRoto;
+
+
+
+
 
 
     void UpdateRotationMatrix(float deltaTime, float timeSec, float[] paramValues)
@@ -91,6 +111,31 @@ public class FourDim : MonoBehaviour
 
         int numBalls = 3000;
 
+        planeList.Add(side1);
+        planeList.Add(side2);
+        planeList.Add(side3);
+        planeList.Add(side4);
+        planeList.Add(side5);
+        planeList.Add(side6);
+        planeList.Add(side7);
+        planeList.Add(side8);
+
+        cubeSides = new BuildConfig(planeList);
+
+        //alpha = new RotationComponent(3, 0, 0);
+        //beta = new RotationComponent(0, 0, 0);
+        //gamma = new RotationComponent(0, 0, 0);
+        //delta = new RotationComponent(0, 0, 0);
+        //epsilon = new RotationComponent(0, 0, 0);
+        //nu = new RotationComponent(0, 0, 0);
+
+        //components.Add(alpha);
+
+        fullRoto = new Rotation(components);
+
+
+
+
         //instantiate sample sphere to clone other spheres from
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         var sphereRenderer = sphere.GetComponent<Renderer>();
@@ -109,19 +154,12 @@ public class FourDim : MonoBehaviour
         var sphereCollider = sphere.GetComponent<SphereCollider>();
         sphereCollider.enabled = false;
 
-        //range from 4d origin to generate balls
-        float initRangeCube = 0.45f;
-        float initRangePlane = 0.5f;
-        //maxDfromEye = Mathf.Sqrt((1f + 2*initRangeCube) * (1f + 2*initRangeCube));
-        //minDfromEye = Mathf.Sqrt((1f - 2*initRangeCube) * (1f - 2*initRangeCube));
-
         //CreateSphere(sphere, numBalls, initRange);
         //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
-        BuildFourD.BuildCube(balls, numBalls, initRangeCube);
-        //balls = BuildFourD.BuildIntersectingPlanes(balls, numBalls, initRangePlane, 1);
+        BuildFourD.BuildPlanes(balls, cubeSides);
         UpdateBallList(sphere);
 
-        sphere.SetActive(false);
+        //sphere.SetActive(false);
 
     }
 
@@ -131,7 +169,7 @@ public class FourDim : MonoBehaviour
     void Update()
     {
 
-        UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, paramsZero);
+        UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, paramsSet);
         
 
         //update position loop x, y, z, w positions
@@ -146,21 +184,8 @@ public class FourDim : MonoBehaviour
             balls[i].sphere.transform.position = projected;
 
 
-            //ballList[i].GetComponent<Renderer>().material.color = ApplyFog(balls[i], 0.9f);
-
+ 
             balls[i].sphereRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i].point - FourDMath.wHat));
-
-            //var ballRenderer = ballList[i].GetComponent<Renderer>();
-            //ballRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i] - FourDMath.wHat));
-            //Color ballColor = ballRenderer.material.color;
-            //ballColor[0] = 1f;
-            //ballColor[1] = 0f;
-            //ballColor[2] = 0f;
-
-            //ballRenderer.material.color = ballColor;
-
-
-
 
 
             //Update ball scale with uniform and directional scaling thorugh matrix transform

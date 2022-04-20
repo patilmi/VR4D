@@ -49,61 +49,30 @@ public class BuildFourD
     }
 
 
-    public static void BuildCube(List<FourDPoint> balls, int count, float initRange, bool filled = false, int facePairs = 4)
+
+    public static void BuildPlanes(List<FourDPoint> balls, BuildConfig config)
     {
 
-        int total = count;
-        for (int i = 0; i < facePairs && count > 0; i++)
+        for (int i = 0; i < config.planes.Count; i++)
         {
-            int j = 0;
-            while (j < total/facePairs)
+            int normalAxis = config.planes[i].normalAxis;
+            for (int j = 0; j < config.planes[i].count;)
             {
-                Vector4 ball = new Vector4(Random.Range(-initRange, initRange), Random.Range(-initRange, initRange),
-                 Random.Range(-initRange, initRange), Random.Range(-initRange, initRange));
 
-                if (!filled)
-                {
-                    ball[i] = (i % 2 == 0) ? initRange : -initRange;
-                }
-                
+                float halfSideLen = config.planes[i].sideLength;
+                Vector4 ball = new Vector4(Random.Range(-halfSideLen, halfSideLen), Random.Range(-halfSideLen, halfSideLen),
+                    Random.Range(-halfSideLen, halfSideLen), Random.Range(-halfSideLen, halfSideLen));
+
+                ball[normalAxis] = config.planes[i].constantVal;
+
                 balls.Add(new FourDPoint(ball));
-                count--;
-                j++;
+                ++j;
+
+
             }
+
         }
 
     }
-
-
-
-
-    public static List<Vector4> BuildIntersectingPlanes(List<Vector4> balls, int count, float initRange, int numPlanes = 4)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            Vector4 ball = new Vector4(Random.Range(-initRange, initRange), Random.Range(-initRange, initRange),
-                 Random.Range(-initRange, initRange), Random.Range(-initRange, initRange));
-
-            ball[i % numPlanes] = 0f;
-            balls.Add(ball);
-
-        }
-        return balls;
-    }
-
-    public static List<Vector4> BuildIntersectingPlanesClustered (List<Vector4> balls, int count, float initRange, int numPlanes = 4)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            Vector4 ball = new Vector4(Random.Range(-initRange, initRange), Random.Range(-initRange, initRange),
-                 Random.Range(-initRange, initRange), Random.Range(-initRange, initRange));
-
-            ball[i % numPlanes] = 0f;
-            balls.Add(ball);
-
-        }
-        return balls;
-    }
-
 
 }
