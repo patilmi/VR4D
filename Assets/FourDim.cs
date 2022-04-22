@@ -19,7 +19,7 @@ public class FourDim : MonoBehaviour
     float[] paramsZero = {0, 3, 0, 0, 6, 0};
     float[] paramsSet = {3, 5, 4, 3, 2, 7};
 
-    Color ogBallColor = new Color(1f, 0f, 0f);
+    Color defaultBallColor = new Color(1f, 0f, 0f);
     Color fogColor = new Color(0.9f, 0.9f, 0.9f);
 
     List<FourDPlane> planeList = new List<FourDPlane>();
@@ -49,8 +49,8 @@ public class FourDim : MonoBehaviour
 
     void UpdateRotationMatrix(float deltaTime, float timeSec, Rotation rotation)
     {
-        float angularSpeed = 0.0003f;
-        float angleStepSize = deltaTime * angularSpeed;
+        float angularSpeed = 1f/128f;
+        float angleStepSize = deltaTime * angularSpeed * rotation.speedModifier;
 
         //*Mathf.Sin(timeSec)
   
@@ -81,16 +81,13 @@ public class FourDim : MonoBehaviour
         for (int i = 0; i < balls.Count; i++)
         {
             balls[i].sphere = (Instantiate(sphere, FourDMath.Projection(balls[i].point), Quaternion.identity));
-            balls[i].sphereRenderer = balls[i].sphere.GetComponent<Renderer>();
-
+            balls[i].sphereRenderer = balls[i].sphere.GetComponent<Renderer>();          
+            balls[i].originalColor = defaultBallColor;          
         }
-
-
-
     }
 
 
-    Color ExponentialFog(float distance) 
+    Color ExponentialFog(float distance, Color ogBallColor) 
     {
         float lambda = -0.8f;
         float decay = Mathf.Exp(lambda * distance);
@@ -123,10 +120,10 @@ public class FourDim : MonoBehaviour
         cubeSides = new BuildConfig(planeList);
 
         alpha = new RotationComponent(3, 0, 0);
-        beta = new RotationComponent(6, 0, 0);
-        gamma = new RotationComponent(0, 0, 0);
-        delta = new RotationComponent(9, 1, 1);
-        epsilon = new RotationComponent(0, 0, 0);
+        beta = new RotationComponent(1, 0, 0);
+        gamma = new RotationComponent(4, 0, 0);
+        delta = new RotationComponent(0, 1, 1);
+        epsilon = new RotationComponent(5, 0, 0);
         nu = new RotationComponent(0, 0, 0);
 
         components.Add(alpha);
@@ -136,7 +133,7 @@ public class FourDim : MonoBehaviour
         components.Add(epsilon);
         components.Add(nu);
 
-        fullRoto = new Rotation(components);
+        fullRoto = new Rotation(components,0.03f);
 
 
 
@@ -161,7 +158,7 @@ public class FourDim : MonoBehaviour
 
         //CreateSphere(sphere, numBalls, initRange);
         //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
-        BuildFourD.BuildPlanes(balls, cubeSides);
+        BuildFourD.BuildPlanes(balls, cubeSides, 3);
         UpdateBallList(sphere);
 
         //sphere.SetActive(false);
@@ -190,7 +187,7 @@ public class FourDim : MonoBehaviour
 
 
  
-            balls[i].sphereRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i].point - FourDMath.wHat));
+            balls[i].sphereRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i].point - FourDMath.wHat), balls[i].originalColor);
 
 
             //Update ball scale with uniform and directional scaling thorugh matrix transform

@@ -6,10 +6,12 @@ public class Rotation
 {
     // Start is called before the first frame update
     public List<RotationComponent> fullRotation;
+    public float speedModifier;
 
-    public Rotation(List<RotationComponent> components)
+    public Rotation(List<RotationComponent> components, float speedMod = 1)
     {
         fullRotation = components;
+        speedModifier = speedMod;
     }
 
     public void AddRotation(RotationComponent component)
@@ -19,7 +21,7 @@ public class Rotation
 
     public float finalRoto(int index, float timeSec)
     {
-        return fullRotation[index].value + (fullRotation[index].oscillationAmplitude * Mathf.Sin(fullRotation[index].oscillationFrequency * timeSec));
+        return fullRotation[index].value + (fullRotation[index].oscillationAmplitude * Mathf.Sin(fullRotation[index].oscillationFrequency * timeSec * speedModifier));
     }
 
 }

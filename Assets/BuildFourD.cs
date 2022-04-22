@@ -50,7 +50,8 @@ public class BuildFourD
 
 
 
-    public static void BuildPlanes(List<FourDPoint> balls, BuildConfig config)
+
+    public static void BuildPlanes(List<FourDPoint> balls, BuildConfig config, int clusterCount = 1, bool chaining = false)
     {
 
         for (int i = 0; i < config.planes.Count; i++)
@@ -62,11 +63,23 @@ public class BuildFourD
                 float halfSideLen = config.planes[i].sideLength;
                 Vector4 ball = new Vector4(Random.Range(-halfSideLen, halfSideLen), Random.Range(-halfSideLen, halfSideLen),
                     Random.Range(-halfSideLen, halfSideLen), Random.Range(-halfSideLen, halfSideLen));
-
                 ball[normalAxis] = config.planes[i].constantVal;
-
                 balls.Add(new FourDPoint(ball));
-                ++j;
+
+                float clusterSize = 0.05f;
+
+                for (int k = 1; k < clusterCount; k++)
+                {
+                    Vector4 randomDisplacement = FourDMath.RandomVector4(clusterSize);
+                    Vector4 clusterPointPosition = ball + randomDisplacement;
+                    clusterPointPosition[normalAxis] = config.planes[i].constantVal;
+
+
+                    balls.Add(new FourDPoint(clusterPointPosition));
+                }
+
+
+                j += clusterCount;
 
 
             }
@@ -74,5 +87,6 @@ public class BuildFourD
         }
 
     }
+
 
 }
