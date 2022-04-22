@@ -158,7 +158,7 @@ public class FourDim : MonoBehaviour
 
         //CreateSphere(sphere, numBalls, initRange);
         //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
-        BuildFourD.BuildPlanes(balls, cubeSides, 3);
+        BuildFourD.BuildPlanes(balls, cubeSides, 6, true);
         UpdateBallList(sphere);
 
         //sphere.SetActive(false);

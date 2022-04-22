@@ -71,10 +71,8 @@ public class BuildFourD
                 for (int k = 1; k < clusterCount; k++)
                 {
                     Vector4 randomDisplacement = FourDMath.RandomVector4(clusterSize);
-                    Vector4 clusterPointPosition = ball + randomDisplacement;
+                    Vector4 clusterPointPosition = (chaining) ? balls[balls.Count - 1].point + randomDisplacement : ball + randomDisplacement;
                     clusterPointPosition[normalAxis] = config.planes[i].constantVal;
-
-
                     balls.Add(new FourDPoint(clusterPointPosition));
                 }
 
