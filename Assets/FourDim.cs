@@ -119,12 +119,12 @@ public class FourDim : MonoBehaviour
 
         cubeSides = new BuildConfig(planeList);
 
-        alpha = new RotationComponent(3, 0, 0);
-        beta = new RotationComponent(1, 0, 0);
-        gamma = new RotationComponent(4, 0, 0);
-        delta = new RotationComponent(0, 1, 1);
-        epsilon = new RotationComponent(5, 0, 0);
-        nu = new RotationComponent(0, 0, 0);
+        alpha = new RotationComponent(0, 0.1f, 1);
+        beta = new RotationComponent(0, 0, 0);
+        gamma = new RotationComponent(0f, 0f, 0);
+        delta = new RotationComponent(0, 0, 0);
+        epsilon = new RotationComponent(0f, 0f, 0);
+        nu = new RotationComponent(0f, 0f, 0);
 
         components.Add(alpha);
         components.Add(beta);
@@ -133,7 +133,7 @@ public class FourDim : MonoBehaviour
         components.Add(epsilon);
         components.Add(nu);
 
-        fullRoto = new Rotation(components,0.03f);
+        fullRoto = new Rotation(components, 1f);
 
 
 
@@ -158,7 +158,7 @@ public class FourDim : MonoBehaviour
 
         //CreateSphere(sphere, numBalls, initRange);
         //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
-        BuildFourD.BuildPlanes(balls, cubeSides, 6, true);
+        BuildFourD.BuildPlanes(balls, cubeSides);
         UpdateBallList(sphere);
 
         //sphere.SetActive(false);
