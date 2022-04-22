@@ -45,4 +45,11 @@ public class FourDMath
         return matrice;
     }
 
+    public static Vector4 RandomizedVector4(Vector4 vecIn, float range) 
+    {
+        return new Vector4(vecIn[0] * UnityEngine.Random.Range(1 - range, 1 + range), vecIn[0] * UnityEngine.Random.Range(1 - range, 1 + range),
+            vecIn[0] * UnityEngine.Random.Range(1 - range, 1 + range), vecIn[0] * UnityEngine.Random.Range(1 - range, 1 + range));
+
+    }
+
 }
