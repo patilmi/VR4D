@@ -45,4 +45,24 @@ public class FourDMath
         return matrice;
     }
 
+    public static Vector4 RandomVector4(float maxSize) 
+
+    {
+        float range = maxSize / 2;
+
+        return new Vector4(UnityEngine.Random.Range(-range, range), UnityEngine.Random.Range(-range, range),
+            UnityEngine.Random.Range(-range, range), UnityEngine.Random.Range(-range, range));
+
+    }
+
+    public static Vector4 RandomizedVector4(Vector4 original)
+
+    {
+        float range = 0.05f;
+
+        return new Vector4(original[0] * UnityEngine.Random.Range(1 - range, 1+ range), original[1] * UnityEngine.Random.Range(1 - range, 1 + range),
+            original[2] * UnityEngine.Random.Range(1 - range, 1 + range), original[3] * UnityEngine.Random.Range(1 - range, 1 + range));
+
+    }
+
 }

@@ -59,6 +59,11 @@
     <Compile Include="Assets\BuildFourD.cs" />
     <Compile Include="Assets\FourDim.cs" />
     <Compile Include="Assets\FourDMath.cs" />
+    <Compile Include="Assets\BuildConfig.cs" />
+    <Compile Include="Assets\FourDPlane.cs" />
+    <Compile Include="Assets\FourDPoint.cs" />
+    <Compile Include="Assets\RotationComponent.cs" />
+    <Compile Include="Assets\Rotation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

@@ -5,47 +5,67 @@ using UnityEngine;
 
 public class FourDim : MonoBehaviour
 {
-    //use arrays?
-    List<Vector4> balls = new List<Vector4>();
-    List<GameObject> ballList = new List<GameObject>();
+    List<FourDPoint> balls = new List<FourDPoint>();
 
     float fourDSphereRadius = 0.015f;
-    //float maxDfromEye;
-    //float minDfromEye;
+
 
     Matrix4x4 FourDRotationMatrix = new Matrix4x4();
 
- 
 
-    float alpha, beta, gamma, delta, epsilon, nu;
+    //float alpha, beta, gamma, delta, epsilon, nu;
     Vector4 rotationRowOne, rotationRowTwo, rotationRowThree, rotationRowFour;
 
-    float[] paramsZero = {0, 3, 0, 3, 8, 2};
+    float[] paramsZero = {0, 3, 0, 0, 6, 0};
     float[] paramsSet = {3, 5, 4, 3, 2, 7};
 
-    Color ogBallColor = new Color(1f, 0f, 0f);
+    Color defaultBallColor = new Color(1f, 0f, 0f);
     Color fogColor = new Color(0.9f, 0.9f, 0.9f);
 
+    List<FourDPlane> planeList = new List<FourDPlane>();
 
-    void UpdateRotationMatrix(float deltaTime, float timeSec, float[] paramValues)
+    FourDPlane side1 = new FourDPlane(500, 0, -0.5f, 0.4f);
+    FourDPlane side2 = new FourDPlane(500, 0, 0.5f, 0.4f);
+    FourDPlane side3 = new FourDPlane(500, 1, -0.5f, 0.4f);
+    FourDPlane side4 = new FourDPlane(500, 1, 0.5f, 0.4f);
+    FourDPlane side5 = new FourDPlane(500, 2, -0.5f, 0.4f);
+    FourDPlane side6 = new FourDPlane(500, 2, 0.5f, 0.4f);
+    FourDPlane side7 = new FourDPlane(500, 3, -0.5f, 0.4f);
+    FourDPlane side8 = new FourDPlane(500, 3, 0.5f, 0.4f);
+
+
+    BuildConfig cubeSides;
+
+    RotationComponent alpha, beta, gamma, delta, epsilon, nu;
+    List<RotationComponent> components = new List<RotationComponent>();
+    
+
+    Rotation fullRoto;
+
+
+
+
+
+
+    void UpdateRotationMatrix(float deltaTime, float timeSec, Rotation rotation)
     {
-        float angularSpeed = 0.0003f;
-        float angleStepSize = deltaTime * angularSpeed;
+        float angularSpeed = 1f/128f;
+        float angleStepSize = deltaTime * angularSpeed * rotation.speedModifier;
 
         //*Mathf.Sin(timeSec)
   
 
-        alpha = paramValues[0] * angleStepSize;
-        beta = paramValues[1] * angleStepSize;
-        gamma = paramValues[2] * angleStepSize;
-        delta = paramValues[3] * Mathf.Sin(7 * timeSec) * angleStepSize;
-        epsilon = paramValues[4] * angleStepSize;
-        nu = paramValues[5] * Mathf.Sin(10*timeSec) * angleStepSize;
+        float xy =  rotation.finalRoto(0, timeSec) * angleStepSize;
+        float xz = rotation.finalRoto(1, timeSec) * angleStepSize;
+        float xw = rotation.finalRoto(2, timeSec) * angleStepSize;
+        float yz = rotation.finalRoto(3, timeSec) * angleStepSize;
+        float yw = rotation.finalRoto(4, timeSec) * angleStepSize;
+        float zw = rotation.finalRoto(5, timeSec) * angleStepSize;
 
-        rotationRowOne = new Vector4(1, alpha, beta, gamma);
-        rotationRowTwo = new Vector4(-alpha, 1, delta, epsilon);
-        rotationRowThree = new Vector4(-beta, -delta, 1, nu);
-        rotationRowFour = new Vector4(-gamma, -epsilon, -nu, 1);
+        rotationRowOne = new Vector4(1, xy, xz, xw);
+        rotationRowTwo = new Vector4(-xy, 1, yz, yw);
+        rotationRowThree = new Vector4(-xz, -yz, 1, zw);
+        rotationRowFour = new Vector4(-xw, -yw, -zw, 1);
 
         FourDRotationMatrix.SetRow(0, rotationRowOne);
         FourDRotationMatrix.SetRow(1, rotationRowTwo);
@@ -60,15 +80,14 @@ public class FourDim : MonoBehaviour
     {
         for (int i = 0; i < balls.Count; i++)
         {
-            ballList.Add(Instantiate(sphere, FourDMath.Projection(balls[i]), Quaternion.identity));
+            balls[i].sphere = (Instantiate(sphere, FourDMath.Projection(balls[i].point), Quaternion.identity));
+            balls[i].sphereRenderer = balls[i].sphere.GetComponent<Renderer>();          
+            balls[i].originalColor = defaultBallColor;          
         }
-
-
-
     }
 
 
-    Color ExponentialFog(float distance) 
+    Color ExponentialFog(float distance, Color ogBallColor) 
     {
         float lambda = -0.8f;
         float decay = Mathf.Exp(lambda * distance);
@@ -89,6 +108,36 @@ public class FourDim : MonoBehaviour
 
         int numBalls = 3000;
 
+        planeList.Add(side1);
+        planeList.Add(side2);
+        planeList.Add(side3);
+        planeList.Add(side4);
+        planeList.Add(side5);
+        planeList.Add(side6);
+        planeList.Add(side7);
+        planeList.Add(side8);
+
+        cubeSides = new BuildConfig(planeList);
+
+        alpha = new RotationComponent(3, 0, 0);
+        beta = new RotationComponent(1, 0, 0);
+        gamma = new RotationComponent(4, 0, 0);
+        delta = new RotationComponent(0, 1, 1);
+        epsilon = new RotationComponent(5, 0, 0);
+        nu = new RotationComponent(0, 0, 0);
+
+        components.Add(alpha);
+        components.Add(beta);
+        components.Add(gamma);
+        components.Add(delta);
+        components.Add(epsilon);
+        components.Add(nu);
+
+        fullRoto = new Rotation(components,0.03f);
+
+
+
+
         //instantiate sample sphere to clone other spheres from
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         var sphereRenderer = sphere.GetComponent<Renderer>();
@@ -107,19 +156,12 @@ public class FourDim : MonoBehaviour
         var sphereCollider = sphere.GetComponent<SphereCollider>();
         sphereCollider.enabled = false;
 
-        //range from 4d origin to generate balls
-        float initRangeCube = 0.45f;
-        float initRangePlane = 0.5f;
-        //maxDfromEye = Mathf.Sqrt((1f + 2*initRangeCube) * (1f + 2*initRangeCube));
-        //minDfromEye = Mathf.Sqrt((1f - 2*initRangeCube) * (1f - 2*initRangeCube));
-
         //CreateSphere(sphere, numBalls, initRange);
         //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
-        balls = BuildFourD.BuildCube(balls, numBalls, initRangeCube);
-        //balls = BuildFourD.BuildIntersectingPlanes(balls, numBalls, initRangePlane, 1);
+        BuildFourD.BuildPlanes(balls, cubeSides, 6, true);
         UpdateBallList(sphere);
 
-        sphere.SetActive(false);
+        //sphere.SetActive(false);
 
     }
 
@@ -129,7 +171,7 @@ public class FourDim : MonoBehaviour
     void Update()
     {
 
-        UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, paramsZero);
+        UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, fullRoto);
         
 
         //update position loop x, y, z, w positions
@@ -137,39 +179,28 @@ public class FourDim : MonoBehaviour
         {
 
             //Rotate 4d Sphere
-            balls[i] = FourDRotationMatrix * balls[i];
+            balls[i].point = FourDRotationMatrix * balls[i].point;
 
             //project 4d ball vector to 3d ball vector (vector = position) and update rendered ball position
-            Vector3 projected = FourDMath.Projection(balls[i]);
-            ballList[i].transform.position = projected;
+            Vector3 projected = FourDMath.Projection(balls[i].point);
+            balls[i].sphere.transform.position = projected;
 
 
-            //ballList[i].GetComponent<Renderer>().material.color = ApplyFog(balls[i], 0.9f);
-
-            var ballRenderer = ballList[i].GetComponent<Renderer>();
-            ballRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i] - FourDMath.wHat));
-            //Color ballColor = ballRenderer.material.color;
-            //ballColor[0] = 1f;
-            //ballColor[1] = 0f;
-            //ballColor[2] = 0f;
-
-            //ballRenderer.material.color = ballColor;
-
-
-
+ 
+            balls[i].sphereRenderer.material.color = ExponentialFog(Vector4.Magnitude(balls[i].point - FourDMath.wHat), balls[i].originalColor);
 
 
             //Update ball scale with uniform and directional scaling thorugh matrix transform
-            float S = FourDMath.ShortRadiusScaling(balls[i]);
+            float S = FourDMath.ShortRadiusScaling(balls[i].point);
 
             //find additional pi direction scaling
             float Sprime = FourDMath.LongRadiusScaling(projected);
             
             //apply scales (additional scales in z direction)
-            ballList[i].transform.localScale = new Vector3(S*fourDSphereRadius, S*fourDSphereRadius, S*Sprime*fourDSphereRadius);
+            balls[i].sphere.transform.localScale = new Vector3(S*fourDSphereRadius, S*fourDSphereRadius, S*Sprime*fourDSphereRadius);
 
             //rotate z direction to pi direction
-            ballList[i].transform.rotation = Quaternion.LookRotation(ballList[i].transform.position);
+            balls[i].sphere.transform.rotation = Quaternion.LookRotation(balls[i].sphere.transform.position);
 
         }
     }
