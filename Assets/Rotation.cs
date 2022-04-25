@@ -2,26 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Rotation
 {
     // Start is called before the first frame update
-    public List<RotationComponent> fullRotation;
+
+    public RotationComponent xy;
+    public RotationComponent xz;
+    public RotationComponent xw;
+    public RotationComponent yz;
+    public RotationComponent yw;
+    public RotationComponent zw;
+
+
     public float speedModifier;
 
-    public Rotation(List<RotationComponent> components, float speedMod = 1)
+    public Rotation(RotationComponent xy, RotationComponent xz, RotationComponent xw,
+        RotationComponent yz, RotationComponent yw, RotationComponent zw, float speedMod = 1)
     {
-        fullRotation = components;
+        this.xy = xy;
+        this.xz = xz;
+        this.xw = xw;
+        this.yz = yz;
+        this.yw = yw;
+        this.zw = zw;
         speedModifier = speedMod;
     }
 
-    public void AddRotation(RotationComponent component)
-    {
-        fullRotation.Add(component);
-    }
 
-    public float finalRoto(int index, float timeSec)
+    public float finalRoto(RotationComponent rotationPlane, float timeSec)
     {
-        return fullRotation[index].value + (fullRotation[index].oscillationAmplitude * Mathf.Sin(fullRotation[index].oscillationFrequency * timeSec * speedModifier));
+        return rotationPlane.value + (rotationPlane.oscillationAmplitude * Mathf.Sin(rotationPlane.oscillationFrequency * timeSec * speedModifier));
     }
 
 }

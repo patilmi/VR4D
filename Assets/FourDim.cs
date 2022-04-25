@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
+
 public class FourDim : MonoBehaviour
 {
     List<FourDPoint> balls = new List<FourDPoint>();
@@ -38,7 +39,9 @@ public class FourDim : MonoBehaviour
 
     RotationComponent alpha, beta, gamma, delta, epsilon, nu;
     List<RotationComponent> components = new List<RotationComponent>();
-    
+
+    List<Rotation> rotationObjectSet = new List<Rotation>();
+
 
     Rotation fullRoto;
 
@@ -55,12 +58,12 @@ public class FourDim : MonoBehaviour
         //*Mathf.Sin(timeSec)
   
 
-        float xy =  rotation.finalRoto(0, timeSec) * angleStepSize;
-        float xz = rotation.finalRoto(1, timeSec) * angleStepSize;
-        float xw = rotation.finalRoto(2, timeSec) * angleStepSize;
-        float yz = rotation.finalRoto(3, timeSec) * angleStepSize;
-        float yw = rotation.finalRoto(4, timeSec) * angleStepSize;
-        float zw = rotation.finalRoto(5, timeSec) * angleStepSize;
+        float xy =  rotation.finalRoto(rotation.xy, timeSec) * angleStepSize;
+        float xz = rotation.finalRoto(rotation.xz, timeSec) * angleStepSize;
+        float xw = rotation.finalRoto(rotation.xw, timeSec) * angleStepSize;
+        float yz = rotation.finalRoto(rotation.yz, timeSec) * angleStepSize;
+        float yw = rotation.finalRoto(rotation.yw, timeSec) * angleStepSize;
+        float zw = rotation.finalRoto(rotation.zw, timeSec) * angleStepSize;
 
         rotationRowOne = new Vector4(1, xy, xz, xw);
         rotationRowTwo = new Vector4(-xy, 1, yz, yw);
@@ -102,9 +105,23 @@ public class FourDim : MonoBehaviour
     }
 
 
+    //read rotation objects from json File
+    void readRotationObject()
+    {
+
+        string fileName = "Assets/RotationObjects.json";
+        string jsonString = System.IO.File.ReadAllText(fileName);
+        fullRoto = JsonUtility.FromJson<Rotation>(jsonString);
+        
+
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
+
+
 
         int numBalls = 3000;
 
@@ -126,14 +143,9 @@ public class FourDim : MonoBehaviour
         epsilon = new RotationComponent(0f, 0f, 0);
         nu = new RotationComponent(0f, 0f, 0);
 
-        components.Add(alpha);
-        components.Add(beta);
-        components.Add(gamma);
-        components.Add(delta);
-        components.Add(epsilon);
-        components.Add(nu);
+        fullRoto = new Rotation(alpha, beta, gamma, delta, epsilon, nu, 1f);
 
-        fullRoto = new Rotation(components, 1f);
+        readRotationObject();
 
 
 
@@ -170,7 +182,7 @@ public class FourDim : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+       
         UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, fullRoto);
         
 
