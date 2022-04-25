@@ -36,3 +36,16 @@ public class Rotation
     }
 
 }
+
+
+[System.Serializable]
+public class Rotations
+{
+    public Rotation[] rotations;
+
+
+    public Rotations(Rotation[] rotoIns)
+    {
+        rotations = rotoIns;
+    }
+}

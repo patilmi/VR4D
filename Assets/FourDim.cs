@@ -8,6 +8,7 @@ public class FourDim : MonoBehaviour
 {
     List<FourDPoint> balls = new List<FourDPoint>();
 
+
     float fourDSphereRadius = 0.015f;
 
 
@@ -40,7 +41,10 @@ public class FourDim : MonoBehaviour
     RotationComponent alpha, beta, gamma, delta, epsilon, nu;
     List<RotationComponent> components = new List<RotationComponent>();
 
-    List<Rotation> rotationObjectSet = new List<Rotation>();
+    //List<Rotation> rotationObjects;
+
+    Rotations rotations;
+    
 
 
     Rotation fullRoto;
@@ -111,7 +115,7 @@ public class FourDim : MonoBehaviour
 
         string fileName = "Assets/RotationObjects.json";
         string jsonString = System.IO.File.ReadAllText(fileName);
-        fullRoto = JsonUtility.FromJson<Rotation>(jsonString);
+        rotations = JsonUtility.FromJson<Rotations>(jsonString);
         
 
     }
@@ -123,7 +127,7 @@ public class FourDim : MonoBehaviour
 
 
 
-        int numBalls = 3000;
+        //int numBalls = 3000;
 
         planeList.Add(side1);
         planeList.Add(side2);
@@ -182,8 +186,11 @@ public class FourDim : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
-        UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, fullRoto);
+
+
+
+        int currentRotation = ((int)Time.fixedTime / 10) % rotations.rotations.Length;
+        UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, rotations.rotations[currentRotation]);
         
 
         //update position loop x, y, z, w positions
