@@ -49,6 +49,7 @@ Rotation Math
 
 R = Tiny rotation, I = Identity matrix, m = tiny matrix 
 R = I + m
+(I + m)<sup>2</sup>
 
 
 
