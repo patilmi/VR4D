@@ -9,23 +9,16 @@ public class FourDim : MonoBehaviour
     List<FourDPoint> balls = new List<FourDPoint>();
 
 
-    float fourDSphereRadius = 0.015f;
-
-
+    const float fourDSphereRadius = 0.015f;
     Matrix4x4 FourDRotationMatrix = new Matrix4x4();
 
-
-    //float alpha, beta, gamma, delta, epsilon, nu;
-    Vector4 rotationRowOne, rotationRowTwo, rotationRowThree, rotationRowFour;
-
-    float[] paramsZero = {0, 3, 0, 0, 6, 0};
-    float[] paramsSet = {3, 5, 4, 3, 2, 7};
 
     Color defaultBallColor = new Color(1f, 0f, 0f);
     Color fogColor = new Color(0.9f, 0.9f, 0.9f);
 
     List<FourDPlane> planeList = new List<FourDPlane>();
 
+    //Going to be replaced with json config object
     FourDPlane side1 = new FourDPlane(300, 0, -0.5f, 0.4f);
     FourDPlane side2 = new FourDPlane(300, 0, 0.5f, 0.4f);
     FourDPlane side3 = new FourDPlane(300, 1, -0.5f, 0.4f);
@@ -37,21 +30,10 @@ public class FourDim : MonoBehaviour
 
 
     BuildConfig cubeSides;
-
-    RotationComponent alpha, beta, gamma, delta, epsilon, nu;
     List<RotationComponent> components = new List<RotationComponent>();
 
-    //List<Rotation> rotationObjects;
-
     Rotations rotations;
-    
-
-
     Rotation fullRoto;
-
-
-
-
 
 
     void UpdateRotationMatrix(float deltaTime, float timeSec, Rotation rotation)
@@ -69,10 +51,10 @@ public class FourDim : MonoBehaviour
         float yw = rotation.finalRoto(rotation.yw, timeSec) * angleStepSize;
         float zw = rotation.finalRoto(rotation.zw, timeSec) * angleStepSize;
 
-        rotationRowOne = new Vector4(1, xy, xz, xw);
-        rotationRowTwo = new Vector4(-xy, 1, yz, yw);
-        rotationRowThree = new Vector4(-xz, -yz, 1, zw);
-        rotationRowFour = new Vector4(-xw, -yw, -zw, 1);
+        Vector4 rotationRowOne = new Vector4(1, xy, xz, xw);
+        Vector4 rotationRowTwo = new Vector4(-xy, 1, yz, yw);
+        Vector4 rotationRowThree = new Vector4(-xz, -yz, 1, zw);
+        Vector4 rotationRowFour = new Vector4(-xw, -yw, -zw, 1);
 
         FourDRotationMatrix.SetRow(0, rotationRowOne);
         FourDRotationMatrix.SetRow(1, rotationRowTwo);
@@ -98,19 +80,19 @@ public class FourDim : MonoBehaviour
     {
         float lambda = -0.8f;
         float decay = Mathf.Exp(lambda * distance);
-        Color fog = new Color(fogged(decay, ogBallColor[0], fogColor[0]), fogged(decay, ogBallColor[1], fogColor[1]),
-            fogged(decay, ogBallColor[2], fogColor[2]));
+        Color fog = new Color(Fogged(decay, ogBallColor[0], fogColor[0]), Fogged(decay, ogBallColor[1], fogColor[1]),
+            Fogged(decay, ogBallColor[2], fogColor[2]));
         return fog;
     }
 
-    float fogged(float decay, float colorVal, float fogVal) 
+    float Fogged(float decay, float colorVal, float fogVal) 
     {
         return (colorVal * decay) + (fogVal * (1 - decay));
     }
 
 
     //read rotation objects from json File
-    void readRotationObject()
+    void LoadRotationObject()
     {
 
         string fileName = "Assets/src/config/RotationObjects.json";
@@ -120,15 +102,9 @@ public class FourDim : MonoBehaviour
 
     }
 
-
-    // Start is called before the first frame update
-    void Start()
+    void LoadStructureObject()
     {
-
-
-
-        //int numBalls = 3000;
-
+        //replace with json implementation
         planeList.Add(side1);
         planeList.Add(side2);
         planeList.Add(side3);
@@ -137,46 +113,29 @@ public class FourDim : MonoBehaviour
         planeList.Add(side6);
         planeList.Add(side7);
         planeList.Add(side8);
-
         cubeSides = new BuildConfig(planeList);
 
-        //alpha = new RotationComponent(0, 0.1f, 1);
-        //beta = new RotationComponent(0, 0, 0);
-        //gamma = new RotationComponent(0f, 0f, 0);
-        //delta = new RotationComponent(0, 0, 0);
-        //epsilon = new RotationComponent(0f, 0f, 0);
-        //nu = new RotationComponent(0f, 0f, 0);
-
-        //fullRoto = new Rotation(alpha, beta, gamma, delta, epsilon, nu, 1f);
-
-        readRotationObject();
+    }
 
 
 
+    // Start is called before the first frame update
+    void Start()
+    {
+        //Load config structure and rotation config objects
+        LoadStructureObject();
+        LoadRotationObject();
 
         //instantiate sample sphere to clone other spheres from
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        var sphereRenderer = sphere.GetComponent<Renderer>();
-        Shader unlit = Shader.Find("Unlit/Color");
-
-        sphereRenderer.material.shader = unlit;
-        sphereRenderer.material.SetColor("_Color", Color.red);
-        sphereRenderer.allowOcclusionWhenDynamic = false;
-        sphereRenderer.receiveShadows = false;
-        sphereRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-
-        sphere.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-
-
-
-        var sphereCollider = sphere.GetComponent<SphereCollider>();
-        sphereCollider.enabled = false;
-
-        //CreateSphere(sphere, numBalls, initRange);
-        //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
+        BuildFourD.RootSphereConfig(sphere);
+        
+        //Build structure embedded in 4D space
         BuildFourD.BuildPlanes(balls, cubeSides);
         UpdateBallList(sphere);
-        sphereRenderer.material.color = ExponentialFog(Vector4.Magnitude(FourDMath.wHat), sphereRenderer.material.color);
+
+        //apply fog to original sphere
+        sphere.GetComponent<Renderer>().material.color = ExponentialFog(Vector4.Magnitude(FourDMath.wHat), sphere.GetComponent<Renderer>().material.color);
 
         //sphere.SetActive(false);
 

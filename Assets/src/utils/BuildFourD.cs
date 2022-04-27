@@ -86,5 +86,22 @@ public class BuildFourD
 
     }
 
+    public static void RootSphereConfig(GameObject sphere)
+    {
+        var sphereRenderer = sphere.GetComponent<Renderer>();
+        Shader unlit = Shader.Find("Unlit/Color");
+
+        sphereRenderer.material.shader = unlit;
+        sphereRenderer.material.SetColor("_Color", Color.red);
+        sphereRenderer.allowOcclusionWhenDynamic = false;
+        sphereRenderer.receiveShadows = false;
+        sphereRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+        sphere.transform.localScale = new Vector3(0.08f, 0.08f, 0.08f);
+
+        var sphereCollider = sphere.GetComponent<SphereCollider>();
+        sphereCollider.enabled = false;
+    }
+
 
 }
