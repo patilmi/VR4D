@@ -52,15 +52,46 @@ The recording quality and effect is greatly diminished compared to original rend
 
 All source code is in VR4D/Assets/src https://github.com/patilmi/VR4D/tree/main/Assets/src. Main file with start() and update() functions is FourDim.cs. 
 
-Rotation Math
+### Rotation Math
 
-R = Any tiny rotation, I = Identity matrix, m = tiny matrix, v = any vector
+R = A tiny rotation, I = Identity matrix, m = Infinitesmal matrix, v = any vector
 
 R = I + m
 
-((I + m)v)<sup>2</sup> = v<sup>2</sup>   Because it's a rigid body transformation
+((I + m)v)<sup>2</sup> = v<sup>2</sup>   (Because it's a rigid body transformation)
 
-v<sup>T</sup>(I + m<sup>T</sup>)((I + m)v) = v<sup>T</sup>v  Matrix Form
+v<sup>T</sup>(I + m<sup>T</sup>)((I + m)v) = v<sup>T</sup>v  (Rewrite in matrix form)
+
+v<sup>T</sup>(I + m<sup>T</sup> + m)v = v<sup>T</sup>v    (Drop m<sup>2</sup> terms)
+
+v<sup>T</sup>(m<sup>T</sup> + m)v = 0
+
+m<sup>T</sup> + m = 0
+
+m must be antisymmetric
+
+### Projection Math
+
+Point represented by tiny sphere
+
+p = 4D point vector, wHat = unit vector (0, 0, 0, 1), the 4D eye is also conveniently placed at wHat, Pi = Projection center of 4D point
+
+Pi(p) = (p - (p dot what))/(1 - (p dot wHat))
+
+s = uniform ball radius scaling due to perspective projection
+
+s<sup>'</sup> = additional radius scaling in Pi(p) direction 
+
+s = 1/(1-(p dot w))
+
+s<sup>'</sup> = sqrt{1 + pi<sup>2</sup>}
+
+
+
+
+
+
+
 
 
 
