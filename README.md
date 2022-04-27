@@ -19,9 +19,6 @@ add the script files as assets, attach '4dim.cs' to an empty game object and the
 
 (Link to website with videos page)
 
-# Signs that it is working
-
-Rotating object begins to look like a rigid body rather than a warping structure
 
 # Why it is unique
 
