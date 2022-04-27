@@ -58,7 +58,9 @@ R = Any tiny rotation, I = Identity matrix, m = tiny matrix, v = any vector
 
 R = I + m
 
-((I + m)v)<sup>2</sup> = v<sup>2</sup>
+((I + m)v)<sup>2</sup> = v<sup>2</sup>   Because it's a rigid body transformation
+
+v<sup>T</sup>(I + m<sup>T</sup>)((I + m)v) = v<sup>T</sup>v  Matrix Form
 
 
 
