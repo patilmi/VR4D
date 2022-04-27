@@ -46,11 +46,29 @@ Cleanest way to run this code currently is to start a new Unity VR/OpenXR projec
 add the src folder to your Assets folder, attach '4dim.cs' to an empty game object, and then run. Remove default backgrounds objects in the unity project.
 
 https://www.youtube.com/watch?v=IGM0zfpOdsg&ab_channel=MihirPatil
-The recording quality and effect is greatly diminished compared to original rendering. 
+The recording quality and effect is greatly diminished compared to original rendering. More videos and a website to come.
 
 # Code Guide
 
-All source code is in VR4D/Assets/src https://github.com/patilmi/VR4D/tree/main/Assets/src. Main file with start() and update() functions is FourDim.cs. 
+All source code is in VR4D/Assets/src https://github.com/patilmi/VR4D/tree/main/Assets/src. Main file with Start() and Update() functions is FourDim.cs. 
+
+Start() mainly calls utility functions to build up 4D rigidbody structures and rotation objects and Update() projects onto 3D, renders, and appplies rotations, fog, and scaling effects.
+
+
+
+FourDim.cs has ExponentialFog() function, and rotation matrix construction.
+
+
+VR4D/Assets/src/utils https://github.com/patilmi/VR4D/tree/main/Assets/src/utils contains BuildFourD.cs and FourDMath.cs
+
+BuildFourD.cs contains utilities for loading configuration objects and building 4D structures, like 4D planes, cubes, spheres, etc. It also includes build effects like clustering and chaining to generate a variety of effects for embedding 4D points(tiny spheres) in 4D space.
+
+FourDMath contains utilities for math calculations.
+
+
+VR4D/Assets/src/config https://github.com/patilmi/VR4D/tree/main/Assets/src/config Contains various objects and wrappers to build and read in 4D structures and 4D rotations from json.
+
+
 
 ### Rotation Math
 
@@ -88,11 +106,3 @@ s<sup>'</sup> = sqrt{1 + pi<sup>2</sup>}
 
 
 
-
-
-
-
-
-
-
-  
