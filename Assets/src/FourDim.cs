@@ -113,7 +113,7 @@ public class FourDim : MonoBehaviour
     void readRotationObject()
     {
 
-        string fileName = "Assets/RotationObjects.json";
+        string fileName = "Assets/src/config/RotationObjects.json";
         string jsonString = System.IO.File.ReadAllText(fileName);
         rotations = JsonUtility.FromJson<Rotations>(jsonString);
         
