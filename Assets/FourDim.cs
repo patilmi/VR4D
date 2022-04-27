@@ -26,14 +26,14 @@ public class FourDim : MonoBehaviour
 
     List<FourDPlane> planeList = new List<FourDPlane>();
 
-    FourDPlane side1 = new FourDPlane(500, 0, -0.5f, 0.4f);
-    FourDPlane side2 = new FourDPlane(500, 0, 0.5f, 0.4f);
-    FourDPlane side3 = new FourDPlane(500, 1, -0.5f, 0.4f);
-    FourDPlane side4 = new FourDPlane(500, 1, 0.5f, 0.4f);
-    FourDPlane side5 = new FourDPlane(500, 2, -0.5f, 0.4f);
-    FourDPlane side6 = new FourDPlane(500, 2, 0.5f, 0.4f);
-    FourDPlane side7 = new FourDPlane(500, 3, -0.5f, 0.4f);
-    FourDPlane side8 = new FourDPlane(500, 3, 0.5f, 0.4f);
+    FourDPlane side1 = new FourDPlane(300, 0, -0.5f, 0.4f);
+    FourDPlane side2 = new FourDPlane(300, 0, 0.5f, 0.4f);
+    FourDPlane side3 = new FourDPlane(300, 1, -0.5f, 0.4f);
+    FourDPlane side4 = new FourDPlane(300, 1, 0.5f, 0.4f);
+    FourDPlane side5 = new FourDPlane(300, 2, -0.5f, 0.4f);
+    FourDPlane side6 = new FourDPlane(300, 2, 0.5f, 0.4f);
+    FourDPlane side7 = new FourDPlane(300, 3, -0.5f, 0.4f);
+    FourDPlane side8 = new FourDPlane(300, 3, 0.5f, 0.4f);
 
 
     BuildConfig cubeSides;
@@ -140,14 +140,14 @@ public class FourDim : MonoBehaviour
 
         cubeSides = new BuildConfig(planeList);
 
-        alpha = new RotationComponent(0, 0.1f, 1);
-        beta = new RotationComponent(0, 0, 0);
-        gamma = new RotationComponent(0f, 0f, 0);
-        delta = new RotationComponent(0, 0, 0);
-        epsilon = new RotationComponent(0f, 0f, 0);
-        nu = new RotationComponent(0f, 0f, 0);
+        //alpha = new RotationComponent(0, 0.1f, 1);
+        //beta = new RotationComponent(0, 0, 0);
+        //gamma = new RotationComponent(0f, 0f, 0);
+        //delta = new RotationComponent(0, 0, 0);
+        //epsilon = new RotationComponent(0f, 0f, 0);
+        //nu = new RotationComponent(0f, 0f, 0);
 
-        fullRoto = new Rotation(alpha, beta, gamma, delta, epsilon, nu, 1f);
+        //fullRoto = new Rotation(alpha, beta, gamma, delta, epsilon, nu, 1f);
 
         readRotationObject();
 
@@ -176,6 +176,7 @@ public class FourDim : MonoBehaviour
         //balls = BuildFourD.CreateSphereSurface(balls, numBalls, initRange);
         BuildFourD.BuildPlanes(balls, cubeSides);
         UpdateBallList(sphere);
+        sphereRenderer.material.color = ExponentialFog(Vector4.Magnitude(FourDMath.wHat), sphereRenderer.material.color);
 
         //sphere.SetActive(false);
 
