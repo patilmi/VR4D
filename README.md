@@ -16,17 +16,24 @@ Attempts to extend the algorithm our brain uses to construct our model/intuition
 # Why it is unique
 
 There are other projects looking to explore 4D with VR, these mostly operate on the principle of rendering slices of the 4D world.
+
 This project uses a cognitive approach that builds up our intuition organically (through rotation) while slicing loses the continuity that our brain needs to
 stitch 3D projections into a 4D whole. 
 
 # Implications
 
 Opens up the world of intuitive 4D problem solving
+
 Huge cognitive space implications: 
+
   What is happening in the brain when we start to grasp 4D space?
+  
   Brain changes?
+  
   Make us smarter?
+  
   See patterns previously invisible to us?
+  
   4D metaverse?
   
  # Direction
@@ -47,9 +54,11 @@ All source code is in VR4D/Assets/src https://github.com/patilmi/VR4D/tree/main/
 
 Rotation Math
 
-R = Tiny rotation, I = Identity matrix, m = tiny matrix 
+R = Any tiny rotation, I = Identity matrix, m = tiny matrix, v = any vector
+
 R = I + m
-(I + m)<sup>2</sup>
+
+((I + m)v)<sup>2</sup> = v<sup>2</sup>
 
 
 
