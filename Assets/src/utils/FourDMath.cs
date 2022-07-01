@@ -7,12 +7,12 @@ public class FourDMath
 {
     public static Vector4 wHat = new Vector4(0, 0, 0, 1);
     public static Vector4 origin = new Vector4(0, 0, 0, 0);
+
     public static Vector4 Projection(Vector4 point)
     {
         float pDotDub = Vector4.Dot(point, wHat);
         Vector4 projected = point - pDotDub * wHat;
-        //scale
-        float scaleDown = 1 / (1 - pDotDub);
+        float scaleDown = PiScale(point);
         projected = scaleDown * projected;
 
         return projected;
@@ -21,8 +21,15 @@ public class FourDMath
 
     public static float ShortRadiusScaling(Vector4 point)
     {
+        return PiScale(point);
+    }
+
+    public static float PiScale(Vector4 point)
+
+    {
+        float uniformPiScaleScale = 3f;
         float S = 1 / (1 - Vector4.Dot(point, wHat));
-        return S;
+        return uniformPiScaleScale * S;
     }
 
     public static float LongRadiusScaling(Vector3 projectedPoint)

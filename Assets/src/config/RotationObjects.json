@@ -1,8 +1,42 @@
 {
     "rotations": [
+
         {
             "xy": {
-                "value": 0.2,
+                "value": 0.1,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "xz": {
+                "value": 0.1,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "xw": {
+                "value": 0,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "yz": {
+                "value": 0.1,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "yw": {
+                "value": 0,
+                "oscillationAmplitude": 0.4,
+                "oscillationFrequency": 2
+            },
+            "zw": {
+                "value": 0,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "speedModifier": 1
+        },
+        {
+            "xy": {
+                "value": 0,
                 "oscillationAmplitude": 0,
                 "oscillationFrequency": 0
             },
@@ -28,14 +62,14 @@
             },
             "zw": {
                 "value": 0,
-                "oscillationAmplitude": 0,
-                "oscillationFrequency": 0
+                "oscillationAmplitude": 0.4,
+                "oscillationFrequency": 2
             },
             "speedModifier": 1
         },
         {
             "xy": {
-                "value": 0.2,
+                "value": 0,
                 "oscillationAmplitude": 0,
                 "oscillationFrequency": 0
             },
@@ -45,9 +79,9 @@
                 "oscillationFrequency": 0
             },
             "xw": {
-                "value": 0.1,
-                "oscillationAmplitude": 0,
-                "oscillationFrequency": 0
+                "value": 0,
+                "oscillationAmplitude": 0.4,
+                "oscillationFrequency": 2
             },
             "yz": {
                 "value": 0,
@@ -68,17 +102,17 @@
         },
         {
             "xy": {
-                "value": 0.2,
+                "value": 0.1,
                 "oscillationAmplitude": 0,
                 "oscillationFrequency": 0
             },
             "xz": {
-                "value": 0,
+                "value": 0.1,
                 "oscillationAmplitude": 0,
                 "oscillationFrequency": 0
             },
             "xw": {
-                "value": 0.1,
+                "value": 0,
                 "oscillationAmplitude": 0,
                 "oscillationFrequency": 0
             },
@@ -88,16 +122,82 @@
                 "oscillationFrequency": 0
             },
             "yw": {
+                "value": 0,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "zw": {
+                "value": 0.5,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "speedModifier": 1.5
+        },
+        {
+            "xy": {
+                "value": 0.2,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "xz": {
+                "value": 0.2,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "xw": {
+                "value": 0,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "yz": {
+                "value": 0,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "yw": {
+                "value": 0.5,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "zw": {
+                "value": 0.5,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "speedModifier": 0.8
+        },
+        {
+            "xy": {
+                "value": 0.3,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "xz": {
+                "value": 0,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "xw": {
+                "value": 0,
+                "oscillationAmplitude": 0,
+                "oscillationFrequency": 0
+            },
+            "yz": {
                 "value": 0,
                 "oscillationAmplitude": 0.1,
-                "oscillationFrequency": 0.2
+                "oscillationFrequency": 3
+            },
+            "yw": {
+                "value": 0.5,
+                "oscillationAmplitude": 0.1,
+                "oscillationFrequency": 3
             },
             "zw": {
-                "value": 0,
-                "oscillationAmplitude": 0,
-                "oscillationFrequency": 0
+                "value": 0.5,
+                "oscillationAmplitude": 0.1,
+                "oscillationFrequency": 3
             },
-            "speedModifier": 1
+            "speedModifier": 0.9
         }
         
     ]

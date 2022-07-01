@@ -9,7 +9,7 @@ public class FourDim : MonoBehaviour
     List<FourDPoint> balls = new List<FourDPoint>();
 
 
-    const float fourDSphereRadius = 0.015f;
+    const float fourDSphereRadius = 0.004f;
     Matrix4x4 FourDRotationMatrix = new Matrix4x4();
 
 
@@ -19,14 +19,20 @@ public class FourDim : MonoBehaviour
     List<FourDPlane> planeList = new List<FourDPlane>();
 
     //Going to be replaced with json config object
-    FourDPlane side1 = new FourDPlane(300, 0, -0.5f, 0.4f);
-    FourDPlane side2 = new FourDPlane(300, 0, 0.5f, 0.4f);
-    FourDPlane side3 = new FourDPlane(300, 1, -0.5f, 0.4f);
-    FourDPlane side4 = new FourDPlane(300, 1, 0.5f, 0.4f);
-    FourDPlane side5 = new FourDPlane(300, 2, -0.5f, 0.4f);
-    FourDPlane side6 = new FourDPlane(300, 2, 0.5f, 0.4f);
-    FourDPlane side7 = new FourDPlane(300, 3, -0.5f, 0.4f);
-    FourDPlane side8 = new FourDPlane(300, 3, 0.5f, 0.4f);
+
+    static float planeDisaplacementFromCenter = 0.1f;
+    static float planeSideLength = 0.1f;
+
+    static int ballCount = 2000;
+
+    FourDPlane side1 = new FourDPlane(ballCount, 0, -planeDisaplacementFromCenter, planeSideLength);
+    //FourDPlane side2 = new FourDPlane(ballCount, 0, planeDisaplacementFromCenter, planeSideLength);
+    //FourDPlane side3 = new FourDPlane(ballCount, 1, -planeDisaplacementFromCenter, planeSideLength);
+    //FourDPlane side4 = new FourDPlane(ballCount, 1, planeDisaplacementFromCenter, planeSideLength);
+    //FourDPlane side5 = new FourDPlane(ballCount, 2, -planeDisaplacementFromCenter, planeSideLength);
+    //FourDPlane side6 = new FourDPlane(ballCount, 2, planeDisaplacementFromCenter, planeSideLength);
+    //FourDPlane side7 = new FourDPlane(ballCount, 3, -planeDisaplacementFromCenter, planeSideLength);
+    //FourDPlane side8 = new FourDPlane(ballCount, 3, planeDisaplacementFromCenter, planeSideLength);
 
 
     BuildConfig cubeSides;
@@ -78,7 +84,7 @@ public class FourDim : MonoBehaviour
 
     Color ExponentialFog(float distance, Color ogBallColor) 
     {
-        float lambda = -0.8f;
+        float lambda = -1f;
         float decay = Mathf.Exp(lambda * distance);
         Color fog = new Color(Fogged(decay, ogBallColor[0], fogColor[0]), Fogged(decay, ogBallColor[1], fogColor[1]),
             Fogged(decay, ogBallColor[2], fogColor[2]));
@@ -106,13 +112,13 @@ public class FourDim : MonoBehaviour
     {
         //replace with json implementation
         planeList.Add(side1);
-        planeList.Add(side2);
-        planeList.Add(side3);
-        planeList.Add(side4);
-        planeList.Add(side5);
-        planeList.Add(side6);
-        planeList.Add(side7);
-        planeList.Add(side8);
+        //planeList.Add(side2);
+        //planeList.Add(side3);
+        //planeList.Add(side4);
+        //planeList.Add(side5);
+        //planeList.Add(side6);
+        //planeList.Add(side7);
+        //planeList.Add(side8);
         cubeSides = new BuildConfig(planeList);
 
     }
@@ -136,6 +142,7 @@ public class FourDim : MonoBehaviour
 
         //apply fog to original sphere
         sphere.GetComponent<Renderer>().material.color = ExponentialFog(Vector4.Magnitude(FourDMath.wHat), sphere.GetComponent<Renderer>().material.color);
+        sphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 
         //sphere.SetActive(false);
 
@@ -147,9 +154,10 @@ public class FourDim : MonoBehaviour
     void Update()
     {
 
+        int cycleRange = rotations.rotations.Length;
+        
 
-
-        int currentRotation = ((int)Time.fixedTime / 10) % rotations.rotations.Length;
+        int currentRotation = ((int)Time.fixedTime / 10) % cycleRange;
         UpdateRotationMatrix(Time.deltaTime, Time.fixedTime, rotations.rotations[currentRotation]);
         
 
