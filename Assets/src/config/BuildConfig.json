@@ -1,0 +1,53 @@
+{
+    "planes": [
+        {
+            "count": 500,
+            "normalAxis": 0,
+            "constantVal": -0.1,
+            "sideLength": 0.1
+        },
+        {
+            "count": 500,
+            "normalAxis": 0,
+            "constantVal": 0.1,
+            "sideLength": 0.1
+        },
+        {
+            "count": 500,
+            "normalAxis": 1,
+            "constantVal": -0.1,
+            "sideLength": 0.1
+        },
+        {
+            "count": 500,
+            "normalAxis": 1,
+            "constantVal": 0.1,
+            "sideLength": 0.1
+        },
+        {
+            "count": 500,
+            "normalAxis": 2,
+            "constantVal": -0.1,
+            "sideLength": 0.1
+        },
+        {
+            "count": 500,
+            "normalAxis": 2,
+            "constantVal": 0.1,
+            "sideLength": 0.1
+        },
+        {
+            "count": 500,
+            "normalAxis": 3,
+            "constantVal": -0.1,
+            "sideLength": 0.1
+        },
+        {
+            "count": 500,
+            "normalAxis": 3,
+            "constantVal": 0.1,
+            "sideLength": 0.1
+        }
+
+    ]
+}

@@ -111,7 +111,7 @@ public class FourDim : MonoBehaviour
     void LoadStructureObject()
     {
         //replace with json implementation
-        planeList.Add(side1);
+        //planeList.Add(side1);
         //planeList.Add(side2);
         //planeList.Add(side3);
         //planeList.Add(side4);
@@ -119,7 +119,11 @@ public class FourDim : MonoBehaviour
         //planeList.Add(side6);
         //planeList.Add(side7);
         //planeList.Add(side8);
-        cubeSides = new BuildConfig(planeList);
+        string fileName = "Assets/src/config/BuildConfig.json";
+        string jsonString = System.IO.File.ReadAllText(fileName);
+        cubeSides = JsonUtility.FromJson<BuildConfig>(jsonString);
+
+        //cubeSides = new BuildConfig(planeList);
 
     }
 

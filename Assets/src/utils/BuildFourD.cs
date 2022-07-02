@@ -54,7 +54,7 @@ public class BuildFourD
     public static void BuildPlanes(List<FourDPoint> balls, BuildConfig config, int clusterCount = 1, bool chaining = false)
     {
 
-        for (int i = 0; i < config.planes.Count; i++)
+        for (int i = 0; i < config.planes.Length; i++)
         {
             int normalAxis = config.planes[i].normalAxis;
             for (int j = 0; j < config.planes[i].count;)
